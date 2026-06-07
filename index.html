@@ -871,6 +871,20 @@ function startOfWeek(d) { var r=new Date(d); r.setDate(r.getDate()-r.getDay()); 
 function addDays(d,n) { var r=new Date(d); r.setDate(r.getDate()+n); return r; }
 function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+/* ── 이벤트가 특정 날짜에 해당하는지 확인 (멀티데이 지원) ── */
+function evOccursOnDate(ev, ds) {
+  if(ev.start.dateTime) {
+    // 시간 지정 이벤트: 해당 날짜의 00:00~23:59 사이에 걸치는지
+    var s=new Date(ev.start.dateTime), e=new Date(ev.end.dateTime);
+    var dayStart=new Date(ds+'T00:00:00'), dayEnd=new Date(ds+'T23:59:59');
+    return s<=dayEnd && e>=dayStart;
+  } else {
+    // 종일 이벤트: start.date <= ds < end.date (구글은 end가 exclusive)
+    var sd=ev.start.date, ed=ev.end.date;
+    return sd<=ds && ds<ed;
+  }
+}
+
 /* ══════════════════════════════════════════════
    초기화
 ══════════════════════════════════════════════ */
@@ -1248,10 +1262,7 @@ function renderMonthView() {
 
     var isT=isToday(cellDate);
     var ds=ymd(cellDate);
-    var dayEvs=evs.filter(function(ev){
-      var evDate=(ev.start.dateTime||ev.start.date).substring(0,10);
-      return evDate===ds;
-    });
+    var dayEvs=evs.filter(function(ev){ return evOccursOnDate(ev,ds); });
 
     var cls='cal-cell'+(isOther?' other-month':'')+(isT?' today':'');
     html+='<div class="'+cls+'">';
@@ -1312,10 +1323,7 @@ function renderWeekView() {
 
   days.forEach(function(d,col){
     var ds=ymd(d);
-    var dayEvs=evs.filter(function(ev){
-      if(!ev.start.dateTime)return false;
-      return new Date(ev.start.dateTime).toDateString()===d.toDateString();
-    });
+    var dayEvs=evs.filter(function(ev){ return evOccursOnDate(ev,ds); });
     gridHtml+='<div class="week-day-col">';
     for(var h=0;h<24;h++) gridHtml+='<div class="week-hour-cell"></div>';
     // 현재 시간 선
@@ -1358,10 +1366,8 @@ function renderDayView() {
   hdHtml+='</div>';
   document.getElementById('day-header').innerHTML=hdHtml;
 
-  var evs=filteredEvents().filter(function(ev){
-    if(!ev.start.dateTime)return false;
-    return new Date(ev.start.dateTime).toDateString()===d.toDateString();
-  });
+  var ds2=ymd(d);
+  var evs=filteredEvents().filter(function(ev){ return evOccursOnDate(ev,ds2); });
 
   var gridHtml='<div class="day-time-col">';
   for(var h=0;h<24;h++) gridHtml+='<div class="day-time-slot">'+pad(h)+':00</div>';
