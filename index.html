@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JANGVIS — 교사 업무 허브</title>
+<title>J.A.N.G.V.I.S — 교사 업무 허브</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont/dist/tabler-icons.min.css" rel="stylesheet">
 
 <!-- ══ 구글 캘린더 설정 ══
@@ -35,7 +36,7 @@ html,body{height:100%;overflow:hidden}
 [data-theme="dark"]{
   --bg:#1A1A18;--surf:#242422;--card:#2C2C2A;--item:#363634;
   --bd:#3E3E3C;--bd2:#343432;
-  --t1:#E6E6E2;--t2:#B2B2AE;--t3:#7A7A76;--t4:#525250;
+  --t1:#F0F0EC;--t2:#D4D4D0;--t3:#B0B0AC;--t4:#787876;
   --ac:#14B8A6;--ac-d:#0D9488;--ac-bg:#0D2420;
   --danger:#E06060;--danger-bg:#2A1515;
   --warn:#C88030;--warn-bg:#251A08;
@@ -43,7 +44,7 @@ html,body{height:100%;overflow:hidden}
 
 /* ══ 기본 레이아웃 ══ */
 body{
-  font-family:'Noto Sans KR',-apple-system,sans-serif;
+  font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;
   background:var(--bg);color:var(--t1);
   display:flex;height:100vh;font-size:14px;line-height:1.5;
   transition:background .2s,color .2s;
@@ -123,7 +124,7 @@ body{
    2열 일정 패널 (워크스페이스 전용)
 ══════════════════════════════ */
 #col2{
-  width:220px;flex-shrink:0;background:var(--card);
+  width:260px;flex-shrink:0;background:var(--card);
   border-right:0.5px solid var(--bd);
   display:flex;flex-direction:column;overflow:hidden;transition:background .2s;
 }
@@ -217,7 +218,7 @@ body{
   display:flex;flex-direction:column;overflow:hidden;
 }
 #col4{
-  width:220px;flex-shrink:0;background:var(--card);
+  width:260px;flex-shrink:0;background:var(--card);
   display:flex;flex-direction:column;overflow:hidden;
 }
 .col-header{
@@ -256,11 +257,11 @@ body{
 .new-dot{width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0}
 
 /* 미니 달력 */
-.mini-cal{padding:8px 11px;border-bottom:0.5px solid var(--bd2);flex-shrink:0}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;gap:1px}
-.cal-dow{font-size:9px;color:var(--t4);padding:2px 0}
+.mini-cal{padding:10px 13px;border-bottom:0.5px solid var(--bd2);flex-shrink:0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;gap:2px}
+.cal-dow{font-size:10px;color:var(--t4);padding:3px 0}
 .cal-day{
-  font-size:10px;color:var(--t3);padding:4px 2px;border-radius:4px;
+  font-size:11px;color:var(--t3);padding:5px 2px;border-radius:4px;
   cursor:pointer;transition:background .1s;position:relative;
 }
 .cal-day:hover{background:var(--item)}
@@ -273,13 +274,13 @@ body{
 .cal-day.today.has-event::after{background:rgba(255,255,255,.65)}
 
 /* 시간표 */
-.timetable-wrap{padding:8px 11px;border-bottom:0.5px solid var(--bd2);flex-shrink:0}
-.tt-section-label{font-size:10px;font-weight:700;color:var(--t4);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
-.tt-grid{display:grid;grid-template-columns:24px repeat(5,1fr);gap:1px;margin-bottom:1px}
-.tt-period-label{font-size:8px;color:var(--t4);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.3}
-.tt-time{font-size:6.5px;color:var(--t4)}
-.tt-day-hd{font-size:9px;color:var(--t4);text-align:center;padding:1px 0}
-.tt-cell{border-radius:3px;padding:4px 1px;text-align:center;font-size:9px;line-height:1.3}
+.timetable-wrap{padding:10px 13px;border-bottom:0.5px solid var(--bd2);flex-shrink:0}
+.tt-section-label{font-size:10px;font-weight:700;color:var(--t4);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.tt-grid{display:grid;grid-template-columns:28px repeat(5,1fr);gap:2px;margin-bottom:1px}
+.tt-period-label{font-size:9px;color:var(--t4);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.3}
+.tt-time{font-size:7px;color:var(--t4)}
+.tt-day-hd{font-size:10px;color:var(--t4);text-align:center;padding:2px 0}
+.tt-cell{border-radius:3px;padding:6px 1px;text-align:center;font-size:10px;line-height:1.3}
 .tt-on{background:var(--ac);color:#fff}
 .tt-now{background:var(--ac-d);color:#fff}
 .tt-off{background:var(--bd2);color:var(--t4)}
@@ -606,7 +607,7 @@ body{
 <aside id="sidebar">
   <div class="sb-top">
     <div class="logo-mark"><i class="ti ti-robot"></i></div>
-    <span class="logo-text">JANGVIS</span>
+    <span class="logo-text">J.A.N.G.V.I.S</span>
     <div class="sb-toggle" onclick="toggleSidebar()"><i class="ti ti-chevron-left"></i></div>
   </div>
   <nav class="sb-nav">
@@ -643,7 +644,6 @@ body{
       <i class="ti ti-calendar-event"></i>
       <span class="col2-hd-title">일정</span>
       <button id="gcal-login-btn"  class="gcal-btn gcal-btn-login"  onclick="gcalLogin()"  style="display:none"><i class="ti ti-brand-google"></i>연동</button>
-      <button id="gcal-logout-btn" class="gcal-btn gcal-btn-logout" onclick="gcalLogout()" style="display:none"><i class="ti ti-logout"></i>해제</button>
     </div>
     <div class="col2-body" id="col2-body"></div>
   </div>
@@ -968,7 +968,7 @@ function makeDrag(hId, elId) {
   document.addEventListener('mousemove',function(e){
     if(!dragging)return;
     var dx=e.clientX-sx;
-    var nw = elId==='col4'? Math.max(180,Math.min(400,sw-dx)) : Math.max(160,Math.min(400,sw+dx));
+    var nw = elId==='col4'? Math.max(200,Math.min(440,sw-dx)) : Math.max(180,Math.min(440,sw+dx));
     document.getElementById(elId).style.width=nw+'px';
   });
   document.addEventListener('mouseup',function(){
@@ -1013,7 +1013,6 @@ function showCol2(html) { document.getElementById('col2-body').innerHTML=html; }
 
 function gcalInitUI() {
   document.getElementById('gcal-login-btn').style.display='none';
-  document.getElementById('gcal-logout-btn').style.display='none';
   if(!IS_CONFIGURED) {
     showCol2('<div class="gcal-config-warn"><i class="ti ti-alert-triangle"></i><div style="font-size:12px;font-weight:600;color:var(--t2)">Client ID 설정 필요</div><div class="gcal-config-code">HTML 상단의<br>GOOGLE_CLIENT_ID를<br>설정해 주세요.</div></div>');
     return;
@@ -1023,13 +1022,40 @@ function gcalInitUI() {
     if(s){ var p=JSON.parse(s); if(p.expires_at>Date.now()){ gcalToken=p; gcalLoggedIn=true; } }
   }catch(e){}
   if(gcalLoggedIn){
-    document.getElementById('gcal-logout-btn').style.display='flex';
     gcalFetchAll();
+  } else {
+    // 토큰 만료 시 자동 갱신 시도 (사용자 개입 없이)
+    gcalSilentRefresh();
+  }
+  updateCalGcalStatus();
+}
+
+function gcalSilentRefresh() {
+  // 이전에 연동한 적 있으면 자동으로 토큰 갱신 시도
+  var hadToken=false;
+  try{ hadToken=!!localStorage.getItem('jangvis-gcal-hint'); }catch(e){}
+  if(hadToken && typeof google!=='undefined' && google.accounts && google.accounts.oauth2) {
+    showCol2('<div class="gcal-loading"><div class="spinner"></div>자동 연동 중…</div>');
+    google.accounts.oauth2.initTokenClient({
+      client_id:GOOGLE_CLIENT_ID, scope:CALENDAR_SCOPE,
+      prompt:'',
+      callback:function(resp){
+        if(resp.error){
+          document.getElementById('gcal-login-btn').style.display='flex';
+          showCol2('<div class="gcal-setup-wrap"><div class="gcal-setup-icon"><i class="ti ti-calendar-event"></i></div><div class="gcal-setup-title">구글 캘린더 연동</div><div class="gcal-setup-desc">구글 계정으로 로그인하면<br>실제 일정이 표시됩니다.</div><button class="gcal-setup-btn" onclick="gcalLogin()"><i class="ti ti-brand-google"></i>구글로 연동</button></div>');
+          return;
+        }
+        gcalToken={access_token:resp.access_token, expires_at:Date.now()+(resp.expires_in-60)*1000};
+        gcalLoggedIn=true;
+        try{localStorage.setItem('jangvis-gcal-token',JSON.stringify(gcalToken));}catch(e){}
+        gcalFetchAll();
+        updateCalGcalStatus();
+      }
+    }).requestAccessToken();
   } else {
     document.getElementById('gcal-login-btn').style.display='flex';
     showCol2('<div class="gcal-setup-wrap"><div class="gcal-setup-icon"><i class="ti ti-calendar-event"></i></div><div class="gcal-setup-title">구글 캘린더 연동</div><div class="gcal-setup-desc">구글 계정으로 로그인하면<br>실제 일정이 표시됩니다.</div><button class="gcal-setup-btn" onclick="gcalLogin()"><i class="ti ti-brand-google"></i>구글로 연동</button></div>');
   }
-  updateCalGcalStatus();
 }
 
 function gcalLogin() {
@@ -1040,9 +1066,8 @@ function gcalLogin() {
       if(resp.error){ showCol2('<div class="gcal-error"><i class="ti ti-alert-circle"></i><div class="gcal-error-msg">로그인 실패: '+resp.error+'</div><button class="gcal-retry-btn" onclick="gcalLogin()">다시 시도</button></div>'); return; }
       gcalToken={access_token:resp.access_token, expires_at:Date.now()+(resp.expires_in-60)*1000};
       gcalLoggedIn=true;
-      try{localStorage.setItem('jangvis-gcal-token',JSON.stringify(gcalToken));}catch(e){}
+      try{localStorage.setItem('jangvis-gcal-token',JSON.stringify(gcalToken));localStorage.setItem('jangvis-gcal-hint','1');}catch(e){}
       document.getElementById('gcal-login-btn').style.display='none';
-      document.getElementById('gcal-logout-btn').style.display='flex';
       gcalFetchAll();
       updateCalGcalStatus();
     }
@@ -1052,9 +1077,8 @@ function gcalLogin() {
 function gcalLogout() {
   if(gcalToken){ try{google.accounts.oauth2.revoke(gcalToken.access_token,function(){});}catch(e){} }
   gcalToken=null; gcalLoggedIn=false; allEvents=[];
-  try{localStorage.removeItem('jangvis-gcal-token');}catch(e){}
+  try{localStorage.removeItem('jangvis-gcal-token');localStorage.removeItem('jangvis-gcal-hint');}catch(e){}
   document.getElementById('gcal-login-btn').style.display='flex';
-  document.getElementById('gcal-logout-btn').style.display='none';
   showCol2('<div class="gcal-setup-wrap"><div class="gcal-setup-icon"><i class="ti ti-calendar-event"></i></div><div class="gcal-setup-title">구글 캘린더 연동</div><div class="gcal-setup-desc">구글 계정으로 로그인하면<br>실제 일정이 표시됩니다.</div><button class="gcal-setup-btn" onclick="gcalLogin()"><i class="ti ti-brand-google"></i>구글로 연동</button></div>');
   renderCalPage();
   updateCalGcalStatus();
@@ -1462,9 +1486,11 @@ function calNewEvent() {
 
 /* ── 단축키 ── */
 document.addEventListener('keydown',function(e){
-  if(curPage!=='calendar') return;
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
   var k=e.key.toUpperCase();
+  // F키: 사이드바 토글 (어느 페이지에서든)
+  if(k==='F'){ toggleSidebar(); return; }
+  if(curPage!=='calendar') return;
   if(k==='T') calToday();
   else if(k==='M') setView('month');
   else if(k==='W') setView('week');
