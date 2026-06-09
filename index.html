@@ -834,6 +834,13 @@ function evOccursOnDate(ev,ds){
     else{gcalInitUI();}
   }
   waitGIS();
+  // 모바일이면 하단탭 레이아웃 즉시 적용
+  if(window.innerWidth<=768){
+    var nav=document.getElementById('mobile-nav');
+    if(nav)nav.style.display='flex';
+    _prevIsMobile=true;
+    showMobileTab('home');
+  }
 })();
 
 /* ══ 페이지 전환 ══ */
@@ -1942,23 +1949,34 @@ function showMobileTab(tab){
     showPage('calendar');
   }
 }
+var _prevIsMobile=null;
 function applyMobileLayout(){
   var isMobile=window.innerWidth<=768;
   var nav=document.getElementById('mobile-nav');
   if(nav)nav.style.display=isMobile?'flex':'none';
-  if(!isMobile){
+  if(isMobile){
+    // 모바일: 현재 탭에 맞는 레이아웃 적용
+    if(_prevIsMobile!==true){
+      _prevIsMobile=true;
+      showMobileTab(mobileTab);
+    }
+  }else{
     // 데스크탑 복원: 인라인 style 제거
-    var c2=document.getElementById('col2');
-    var c3=document.getElementById('col3');
-    var c4=document.getElementById('col4');
-    if(c2){c2.style.display='';c2.style.width='';}
-    if(c3){c3.style.display='';c3.style.width='';}
-    if(c4){c4.style.display='';c4.style.width='';}
+    if(_prevIsMobile!==false){
+      _prevIsMobile=false;
+      var c2=document.getElementById('col2');
+      var c3=document.getElementById('col3');
+      var c4=document.getElementById('col4');
+      if(c2){c2.style.display='';c2.style.width='';}
+      if(c3){c3.style.display='';c3.style.width='';}
+      if(c4){c4.style.display='';c4.style.width='';}
+    }
   }
 }
 window.addEventListener('resize',applyMobileLayout);
-// 초기 로드 시 적용
-(function(){applyMobileLayout();})();
+// 초기 로드 시 적용 (DOM 완성 후 실행)
+document.addEventListener('DOMContentLoaded',function(){applyMobileLayout();});
+if(document.readyState==='complete'||document.readyState==='interactive'){applyMobileLayout();}
 </script>
 
 <!-- ══ 모바일 하단 내비게이션 ══ -->
