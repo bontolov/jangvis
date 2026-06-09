@@ -198,7 +198,9 @@ body{
 .tt-period-label{font-size:10px;color:var(--t4);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.3}
 .tt-time{font-size:8px;color:var(--t4)}
 .tt-day-hd{font-size:11px;color:var(--t4);text-align:center;padding:2px 0}
-.tt-cell{border-radius:3px;padding:6px 1px;text-align:center;font-size:11px;line-height:1.3}
+.tt-cell{border-radius:3px;padding:6px 1px;text-align:center;font-size:11px;line-height:1.3;cursor:pointer;transition:opacity .12s}
+.tt-cell:hover{opacity:.78}
+.tt-mod{background:color-mix(in srgb,var(--warn) 22%,var(--card))!important;color:var(--warn)!important;outline:1px solid color-mix(in srgb,var(--warn) 55%,transparent)}
 .tt-on{background:var(--ac);color:#fff}
 .tt-now{background:var(--ac-d);color:#fff}
 .tt-off{background:var(--bd2);color:var(--t4)}
@@ -298,8 +300,8 @@ body{
 .cal-dow-cell{padding:6px 9px;font-size:12px;font-weight:700;color:var(--t4);text-align:center}
 .cal-dow-cell.sun{color:var(--danger)}
 .cal-dow-cell.sat{color:#3B82F6}
-.cal-month-grid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(88px,1fr);flex:1;overflow-y:auto}
-.cal-cell{border-right:0.5px solid var(--bd);border-bottom:0.5px solid var(--bd);padding:5px 7px;overflow:hidden;cursor:default;position:relative;min-height:80px}
+.cal-month-grid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(80px,auto);overflow-y:auto;align-content:start}
+.cal-cell{border-right:0.5px solid var(--bd);border-bottom:0.5px solid var(--bd);padding:5px 7px;cursor:default;position:relative;}
 .cal-cell:nth-child(7n){border-right:none}
 .cal-cell.other-month .cell-date-num{color:var(--bd2)}
 .cal-cell.today .cell-date-wrap{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--ac);margin-bottom:2px}
@@ -396,8 +398,8 @@ body{
 .ctx-item i{font-size:15px;color:var(--t3);flex-shrink:0}
 
 /* ── 미니달력 D-day 마커 ── */
-.cal-day.cal-dday::before{content:'';position:absolute;top:3px;right:2px;width:4px;height:4px;border-radius:50%;background:var(--danger)}
-.cal-day.today.cal-dday::before{background:rgba(255,255,255,.85)}
+.cal-day.cal-dday::before{content:'';position:absolute;top:2px;right:2px;width:6px;height:6px;border-radius:50%;background:var(--danger);border:1.5px solid var(--card)}
+.cal-day.today.cal-dday::before{background:rgba(255,255,255,.9);border-color:var(--ac)}
 </style>
 </head>
 <body>
@@ -524,15 +526,12 @@ body{
         <div class="col-body">
           <div class="mini-cal"><div class="cal-grid" id="mini-cal-grid"></div></div>
           <div class="timetable-wrap">
-            <div class="tt-section-label">이번 주 시간표</div>
-            <div class="tt-grid" style="margin-bottom:3px"><div></div><div class="tt-day-hd">월</div><div class="tt-day-hd">화</div><div class="tt-day-hd">수</div><div class="tt-day-hd">목</div><div class="tt-day-hd">금</div></div>
-            <div class="tt-grid"><div class="tt-period-label"><span>1</span><span class="tt-time">09:10</span></div><div class="tt-cell tt-on">201</div><div class="tt-cell tt-on">202</div><div class="tt-cell tt-on">203</div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-x">×</div></div>
-            <div class="tt-grid" style="margin-top:2px"><div class="tt-period-label"><span>2</span><span class="tt-time">10:05</span></div><div class="tt-cell tt-now">203★</div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-on">201</div><div class="tt-cell tt-on">203</div></div>
-            <div class="tt-grid" style="margin-top:2px"><div class="tt-period-label"><span>3</span><span class="tt-time">11:00</span></div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-on">201</div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-on">201</div></div>
-            <div class="tt-grid" style="margin-top:2px"><div class="tt-period-label"><span>4</span><span class="tt-time">11:55</span></div><div class="tt-cell tt-on">202</div><div class="tt-cell tt-on">204</div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-on">202</div><div class="tt-cell tt-off">—</div></div>
-            <div class="tt-grid" style="margin-top:2px"><div class="tt-period-label"><span>5</span><span class="tt-time">13:30</span></div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-on">204</div><div class="tt-cell tt-on">204</div><div class="tt-cell tt-on">204</div></div>
-            <div class="tt-grid" style="margin-top:2px"><div class="tt-period-label"><span>6</span><span class="tt-time">14:25</span></div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-etc">스포</div><div class="tt-cell tt-etc">동아</div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-on">202</div></div>
-            <div class="tt-grid" style="margin-top:2px"><div class="tt-period-label"><span>7</span><span class="tt-time">15:20</span></div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-on">203</div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-off">—</div><div class="tt-cell tt-off">—</div></div>
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:7px">
+              <div class="col-nav-btn" onclick="moveTimetable(-1)" title="이전 주"><i class="ti ti-chevron-left"></i></div>
+              <div class="tt-section-label" id="tt-week-label" style="flex:1;margin:0;text-align:center">이번 주</div>
+              <div class="col-nav-btn" onclick="moveTimetable(1)" title="다음 주"><i class="ti ti-chevron-right"></i></div>
+            </div>
+            <div id="tt-content"></div>
           </div>
           <div class="quick-wrap">
             <div class="quick-section-label">빠른 접근</div>
@@ -649,6 +648,19 @@ var gcalToken = null, gcalLoggedIn = false;
 var IS_CONFIGURED = GOOGLE_CLIENT_ID.indexOf('여기에') === -1 && GOOGLE_CLIENT_ID.length > 20;
 var CAL_PALETTE = ['#3B82F6','#8B5CF6','#F59E0B','#10B981','#EF4444','#EC4899','#06B6D4','#84CC16'];
 var calPaletteIdx = 0;
+/* ─ D-day / 핀보드 / 시간표 상태 (init IIFE보다 반드시 먼저 선언해야 함) ─ */
+var ddays=[]; var ddayPage=0; var DDAY_PER_PAGE=3; var ddayAddOpen=false; var ctxEvId=null;
+var memos=[]; var docs=[];
+var ttWeekOffset=0; var ttOverrides={};
+var BASE_TT=[
+  {p:1,t:'09:10',days:['201','202','203','—','×']},
+  {p:2,t:'10:05',days:['203','—','—','201','203']},
+  {p:3,t:'11:00',days:['—','—','201','—','201']},
+  {p:4,t:'11:55',days:['202','204','—','202','—']},
+  {p:5,t:'13:30',days:['—','—','204','204','204']},
+  {p:6,t:'14:25',days:['—','스포','동아','—','202']},
+  {p:7,t:'15:20',days:['—','203','—','—','—']},
+];
 
 /* ══ 색상 유틸 ══ */
 function getCalColor(id){if(!calColorMap[id]){calColorMap[id]=CAL_PALETTE[calPaletteIdx++%CAL_PALETTE.length];}return calColorMap[id];}
@@ -688,6 +700,7 @@ function evOccursOnDate(ev,ds){
   renderMiniCal();
   loadPinboard();renderPinboard();
   loadDdays();renderDdays();
+  loadTtOverrides();renderTimetable();
   fetchWeather();
   makeDrag('dh-23','col2');makeDrag('dh-34','col4');
   renderCalPage();
@@ -796,9 +809,6 @@ function moveMiniCal(dir){
 }
 
 /* ══ D-day ══ */
-var ddays=[];
-var ddayPage=0;
-var DDAY_PER_PAGE=3;
 
 function loadDdays(){
   try{
@@ -855,7 +865,6 @@ function renderDdays(){
   renderMiniCal(); // D-day 마커 반영
 }
 function setDdayPage(p){ddayPage=p;renderDdays();}
-var ddayAddOpen=false;
 function toggleDdayAdd(){
   ddayAddOpen=!ddayAddOpen;
   var area=document.getElementById('dday-add-area');
@@ -881,7 +890,6 @@ function addDday(){
 function removeDday(i){ddays.splice(i,1);saveDdays();renderDdays();}
 
 /* ══ 컨텍스트 메뉴 ══ */
-var ctxEvId=null;
 function showCtxMenu(e,evId){
   e.preventDefault();e.stopPropagation();
   closePopup();
@@ -970,7 +978,6 @@ function renderWeather(temp,humid,hi,lo,info,city){
 }
 
 /* ══ 핀보드 ══ */
-var memos=[],docs=[];
 function loadPinboard(){
   try{var s=localStorage.getItem('jangvis-memos');memos=s?JSON.parse(s):[{text:'내일 교과협의회 준비물: 독서교육 사례 3가지 출력',time:'오늘 09:30'},{text:'박소윤 학부모 전화번호: 010-xxxx-xxxx',time:'어제 16:12'}];}catch(e){memos=[];}
   try{var s2=localStorage.getItem('jangvis-docs');docs=s2?JSON.parse(s2):[{name:'2026 독서교육 운영 지침',sub:'새 지침 · 3/2 공람',isNew:true},{name:'학생 생활지도 변경사항 안내',sub:'변경사항 · 4/15 공람',isNew:false}];}catch(e){docs=[];}
@@ -1041,6 +1048,98 @@ function addDoc(){
   saveDocs();cancelDocAdd();renderPinboard();
 }
 function removeDoc(i){if(!confirm('문서를 삭제할까요?'))return;docs.splice(i,1);saveDocs();renderPinboard();}
+
+/* ══ 시간표 ══ */
+function getMondayOfWeek(offset){
+  var d=new Date(TODAY);
+  var dow=d.getDay();
+  var diff=dow===0?-6:1-dow;
+  d.setDate(d.getDate()+diff+offset*7);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function getWeekKey(offset){return ymd(getMondayOfWeek(offset));}
+function loadTtOverrides(){
+  try{var s=localStorage.getItem('jangvis-tt-overrides');if(s)ttOverrides=JSON.parse(s);else ttOverrides={};}catch(e){ttOverrides={};}
+}
+function saveTtOverrides(){try{localStorage.setItem('jangvis-tt-overrides',JSON.stringify(ttOverrides));}catch(e){}}
+function ttCellClass(val){
+  if(val==='×')return 'tt-x';
+  if(val==='—'||val==='-')return 'tt-off';
+  if(/[가-힣]/.test(val))return 'tt-etc';
+  return 'tt-on';
+}
+function ttCellIsNow(p,di){
+  if(ttWeekOffset!==0)return false;
+  var now=new Date();
+  if(now.getDay()!==di+1)return false;
+  var starts=[[9,10],[10,5],[11,0],[11,55],[13,30],[14,25],[15,20]];
+  var ends=  [[9,55],[10,50],[11,45],[12,40],[14,15],[15,10],[16,5]];
+  var pi=p-1;if(pi<0||pi>=7)return false;
+  var s=starts[pi][0]*60+starts[pi][1];
+  var e=ends[pi][0]*60+ends[pi][1];
+  var cur=now.getHours()*60+now.getMinutes();
+  return cur>=s&&cur<=e;
+}
+function moveTimetable(dir){ttWeekOffset+=dir;renderTimetable();}
+function renderTimetable(){
+  var wk=getWeekKey(ttWeekOffset);
+  var mon=getMondayOfWeek(ttWeekOffset);
+  var lbl;
+  if(ttWeekOffset===0)lbl='이번 주';
+  else if(ttWeekOffset===1)lbl='다음 주';
+  else if(ttWeekOffset===-1)lbl='지난 주';
+  else{var wn=Math.ceil(mon.getDate()/7);lbl=(mon.getMonth()+1)+'월 '+wn+'주차';}
+  var el=document.getElementById('tt-week-label');
+  if(el)el.textContent=lbl;
+  var over=ttOverrides[wk]||{};
+  var html='<div class="tt-grid" style="margin-bottom:3px"><div></div>';
+  ['월','화','수','목','금'].forEach(function(d){html+='<div class="tt-day-hd">'+d+'</div>';});
+  html+='</div>';
+  BASE_TT.forEach(function(row){
+    html+='<div class="tt-grid" style="margin-top:2px">';
+    html+='<div class="tt-period-label"><span>'+row.p+'</span><span class="tt-time">'+row.t+'</span></div>';
+    row.days.forEach(function(base,di){
+      var key='p'+row.p+'d'+di;
+      var val=over.hasOwnProperty(key)?over[key]:base;
+      var isMod=over.hasOwnProperty(key)&&over[key]!==base;
+      var isNow=ttCellIsNow(row.p,di);
+      var cls=isNow?'tt-now':ttCellClass(val);
+      if(isMod&&!isNow)cls+=' tt-mod';
+      var safeBase=base.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      html+='<div class="tt-cell '+cls+'" onclick="editTtCell(\''+wk+'\',\''+key+'\',this,\''+safeBase+'\')" title="클릭: 수정 / 빈칸: 기본값 복원">'+escHtml(val)+'</div>';
+    });
+    html+='</div>';
+  });
+  var tc=document.getElementById('tt-content');
+  if(tc)tc.innerHTML=html;
+}
+function editTtCell(wk,key,cellEl,base){
+  if(cellEl.querySelector('input'))return;
+  var cur=cellEl.textContent.trim();
+  cellEl.style.padding='2px 1px';
+  cellEl.innerHTML='<input type="text" value="'+cur.replace(/"/g,'&quot;')+'" style="width:100%;font-size:10px;border:none;background:transparent;color:inherit;text-align:center;outline:none;font-family:inherit;cursor:text">';
+  var inp=cellEl.querySelector('input');
+  if(!inp)return;
+  function save(){
+    var newVal=inp.value.trim();
+    if(!ttOverrides[wk])ttOverrides[wk]={};
+    if(newVal===''||newVal===base){
+      delete ttOverrides[wk][key];
+      if(Object.keys(ttOverrides[wk]).length===0)delete ttOverrides[wk];
+    }else{
+      ttOverrides[wk][key]=newVal;
+    }
+    saveTtOverrides();
+    renderTimetable();
+  }
+  inp.addEventListener('blur',save);
+  inp.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){e.preventDefault();inp.blur();}
+    if(e.key==='Escape'){renderTimetable();}
+  });
+  inp.focus();inp.select();
+}
 
 /* ══ 구글 캘린더 ══ */
 function showCol2(html){document.getElementById('col2-body').innerHTML=html;}
