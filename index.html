@@ -171,6 +171,10 @@ body{
 .memo-card{padding:10px 12px;border-radius:7px;border:0.5px solid var(--bd2);background:var(--item);margin-bottom:6px}
 .memo-text{font-size:13px;color:var(--t2);line-height:1.55}
 .memo-time{font-size:11px;color:var(--t4);margin-top:3px}
+.memo-text[contenteditable]{cursor:text;min-height:1em;word-break:break-word}
+.memo-text[contenteditable]:focus{outline:none;box-shadow:0 0 0 1.5px var(--ac);border-radius:2px;padding:0 2px}
+.memo-card.drag-over{border-color:var(--ac)!important;background:var(--ac-bg)!important}
+.memo-page-dots{display:flex;justify-content:center;gap:5px;margin-top:8px}
 .pin-sep{height:0.5px;background:var(--bd2);margin:8px 0 9px}
 .doc-card{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:7px;border:0.5px solid var(--bd2);background:var(--item);margin-bottom:6px;cursor:pointer}
 .doc-card:hover{background:var(--bd2)}
@@ -200,7 +204,7 @@ body{
 .tt-day-hd{font-size:11px;color:var(--t4);text-align:center;padding:2px 0}
 .tt-cell{border-radius:3px;padding:6px 1px;text-align:center;font-size:11px;line-height:1.3;cursor:pointer;transition:opacity .12s}
 .tt-cell:hover{opacity:.78}
-.tt-mod{background:color-mix(in srgb,var(--warn) 22%,var(--card))!important;color:var(--warn)!important;outline:1px solid color-mix(in srgb,var(--warn) 55%,transparent)}
+.tt-mod{background:var(--warn-bg)!important;color:var(--warn)!important;font-weight:700;outline:1.5px solid var(--warn)!important}
 .tt-on{background:var(--ac);color:#fff}
 .tt-now{background:var(--ac-d);color:#fff}
 .tt-off{background:var(--bd2);color:var(--t4)}
@@ -300,7 +304,7 @@ body{
 .cal-dow-cell{padding:6px 9px;font-size:12px;font-weight:700;color:var(--t4);text-align:center}
 .cal-dow-cell.sun{color:var(--danger)}
 .cal-dow-cell.sat{color:#3B82F6}
-.cal-month-grid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(80px,auto);overflow-y:auto;align-content:start}
+.cal-month-grid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(80px,auto);flex:1;min-height:0;overflow-y:auto;align-content:start}
 .cal-cell{border-right:0.5px solid var(--bd);border-bottom:0.5px solid var(--bd);padding:5px 7px;cursor:default;position:relative;}
 .cal-cell:nth-child(7n){border-right:none}
 .cal-cell.other-month .cell-date-num{color:var(--bd2)}
@@ -653,14 +657,15 @@ var ddays=[]; var ddayPage=0; var DDAY_PER_PAGE=3; var ddayAddOpen=false; var ct
 var memos=[]; var docs=[];
 var ttWeekOffset=0; var ttOverrides={};
 var BASE_TT=[
-  {p:1,t:'09:10',days:['201','202','203','—','×']},
-  {p:2,t:'10:05',days:['203','—','—','201','203']},
-  {p:3,t:'11:00',days:['—','—','201','—','201']},
-  {p:4,t:'11:55',days:['202','204','—','202','—']},
-  {p:5,t:'13:30',days:['—','—','204','204','204']},
-  {p:6,t:'14:25',days:['—','스포','동아','—','202']},
-  {p:7,t:'15:20',days:['—','203','—','—','—']},
+  {p:1,t:'09:10',days:['201','202','203','·','×']},
+  {p:2,t:'10:05',days:['203','·','·','201','203']},
+  {p:3,t:'11:00',days:['·','·','201','·','201']},
+  {p:4,t:'11:55',days:['202','204','·','202','·']},
+  {p:5,t:'13:30',days:['·','·','204','204','204']},
+  {p:6,t:'14:25',days:['·','스포','동아','·','202']},
+  {p:7,t:'15:20',days:['·','203','·','·','·']},
 ];
+var memoPage=0; var MEMO_PER_PAGE=4; var dragMemoIdx=-1;
 
 /* ══ 색상 유틸 ══ */
 function getCalColor(id){if(!calColorMap[id]){calColorMap[id]=CAL_PALETTE[calPaletteIdx++%CAL_PALETTE.length];}return calColorMap[id];}
@@ -987,15 +992,32 @@ function saveDocs(){try{localStorage.setItem('jangvis-docs',JSON.stringify(docs)
 function renderPinboard(){
   var ml=document.getElementById('memo-list'),dl=document.getElementById('doc-list');
   if(!ml||!dl)return;
+  var totalPages=Math.max(1,Math.ceil(memos.length/MEMO_PER_PAGE));
+  if(memoPage>=totalPages)memoPage=Math.max(0,totalPages-1);
+  var start=memoPage*MEMO_PER_PAGE;
+  var pageItems=memos.slice(start,start+MEMO_PER_PAGE);
   var mh='';
-  memos.forEach(function(m,i){
-    mh+='<div class="memo-card">'
-      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">'
-      +'<div class="memo-text">'+escHtml(m.text)+'</div>'
-      +'<span style="font-size:16px;line-height:1;color:var(--t4);cursor:pointer;flex-shrink:0" onclick="removeMemo('+i+')">×</span>'
-      +'</div><div class="memo-time">'+escHtml(m.time||'')+'</div></div>';
-  });
-  if(!memos.length)mh='<div style="font-size:12px;color:var(--t4);padding:4px 0">메모가 없습니다</div>';
+  if(!memos.length){
+    mh='<div style="font-size:12px;color:var(--t4);padding:4px 0">메모가 없습니다</div>';
+  }else{
+    pageItems.forEach(function(m,li){
+      var gi=start+li;
+      mh+='<div class="memo-card" id="memo-card-'+gi+'" draggable="true"'
+        +' ondragstart="memoDragStart(event,'+gi+')" ondragend="memoDragEnd(event)"'
+        +' ondragover="memoDragOver(event,'+gi+')" ondragleave="memoDragLeave(event)" ondrop="memoDrop(event,'+gi+')">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">'
+        +'<div class="memo-text" contenteditable="true" onblur="saveMemoEdit('+gi+',this)" onkeydown="if(event.key===\'Escape\')this.blur()">'+escHtml(m.text)+'</div>'
+        +'<span style="font-size:16px;line-height:1;color:var(--t4);cursor:pointer;flex-shrink:0" onclick="removeMemo('+gi+')">×</span>'
+        +'</div><div class="memo-time">'+escHtml(m.time||'')+'</div></div>';
+    });
+    if(totalPages>1){
+      mh+='<div class="memo-page-dots">';
+      for(var p=0;p<totalPages;p++){
+        mh+='<span onclick="setMemoPage('+p+')" style="display:inline-block;width:6px;height:6px;border-radius:50%;cursor:pointer;transition:background .15s;background:'+(p===memoPage?'var(--ac)':'var(--bd2)')+'"></span>';
+      }
+      mh+='</div>';
+    }
+  }
   ml.innerHTML=mh;
   var dh='';
   docs.forEach(function(d,i){
@@ -1025,9 +1047,50 @@ function addMemo(){
   var text=t.value.trim();if(!text)return;
   var now=new Date();
   memos.unshift({text:text,time:'오늘 '+pad(now.getHours())+':'+pad(now.getMinutes())});
+  memoPage=0;
   saveMemos();cancelMemoAdd();renderPinboard();
 }
-function removeMemo(i){if(!confirm('메모를 삭제할까요?'))return;memos.splice(i,1);saveMemos();renderPinboard();}
+function removeMemo(gi){if(!confirm('메모를 삭제할까요?'))return;memos.splice(gi,1);saveMemos();renderPinboard();}
+function setMemoPage(p){memoPage=p;renderPinboard();}
+function saveMemoEdit(gi,el){
+  var newText=el.innerText.trim();
+  if(gi<0||gi>=memos.length){return;}
+  if(!newText){el.innerHTML=escHtml(memos[gi].text);return;}
+  if(newText===memos[gi].text)return;
+  memos[gi].text=newText;
+  var now=new Date();
+  memos[gi].time='수정 '+pad(now.getHours())+':'+pad(now.getMinutes());
+  saveMemos();
+  var card=el.closest('.memo-card');
+  if(card){var timeEl=card.querySelector('.memo-time');if(timeEl)timeEl.textContent=memos[gi].time;}
+}
+function memoDragStart(e,i){
+  dragMemoIdx=i;
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain',String(i));
+  var c=document.getElementById('memo-card-'+i);
+  if(c)setTimeout(function(){c.style.opacity='0.4';},0);
+}
+function memoDragEnd(e){
+  document.querySelectorAll('.memo-card').forEach(function(c){c.style.opacity='';c.classList.remove('drag-over');});
+  dragMemoIdx=-1;
+}
+function memoDragOver(e,i){
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  document.querySelectorAll('.memo-card').forEach(function(c){c.classList.remove('drag-over');});
+  var tgt=document.getElementById('memo-card-'+i);
+  if(tgt&&i!==dragMemoIdx)tgt.classList.add('drag-over');
+}
+function memoDragLeave(e){var c=e.currentTarget;if(c)c.classList.remove('drag-over');}
+function memoDrop(e,i){
+  e.preventDefault();
+  document.querySelectorAll('.memo-card').forEach(function(c){c.classList.remove('drag-over');c.style.opacity='';});
+  if(dragMemoIdx===-1||dragMemoIdx===i){dragMemoIdx=-1;return;}
+  var dragged=memos.splice(dragMemoIdx,1)[0];
+  memos.splice(i,0,dragged);
+  saveMemos();dragMemoIdx=-1;renderPinboard();
+}
 function showDocAdd(){
   var area=document.getElementById('doc-add-area');if(!area)return;
   area.innerHTML='<div style="margin-bottom:8px;background:var(--item);border:0.5px solid var(--bd2);border-radius:7px;padding:9px 11px">'
@@ -1065,7 +1128,7 @@ function loadTtOverrides(){
 function saveTtOverrides(){try{localStorage.setItem('jangvis-tt-overrides',JSON.stringify(ttOverrides));}catch(e){}}
 function ttCellClass(val){
   if(val==='×')return 'tt-x';
-  if(val==='—'||val==='-')return 'tt-off';
+  if(val==='—'||val==='-'||val==='·'||val===''||val==='공강')return 'tt-off';
   if(/[가-힣]/.test(val))return 'tt-etc';
   return 'tt-on';
 }
@@ -1094,7 +1157,10 @@ function renderTimetable(){
   if(el)el.textContent=lbl;
   var over=ttOverrides[wk]||{};
   var html='<div class="tt-grid" style="margin-bottom:3px"><div></div>';
-  ['월','화','수','목','금'].forEach(function(d){html+='<div class="tt-day-hd">'+d+'</div>';});
+  ['월','화','수','목','금'].forEach(function(d,i){
+    var dt=new Date(mon);dt.setDate(dt.getDate()+i);
+    html+='<div class="tt-day-hd"><div>'+d+'</div><div style="font-size:9px;color:var(--t4);margin-top:1px">'+dt.getDate()+'</div></div>';
+  });
   html+='</div>';
   BASE_TT.forEach(function(row){
     html+='<div class="tt-grid" style="margin-top:2px">';
@@ -1124,9 +1190,11 @@ function editTtCell(wk,key,cellEl,base){
   function save(){
     var newVal=inp.value.trim();
     if(!ttOverrides[wk])ttOverrides[wk]={};
-    if(newVal===''||newVal===base){
+    if(newVal===base){
       delete ttOverrides[wk][key];
       if(Object.keys(ttOverrides[wk]).length===0)delete ttOverrides[wk];
+    }else if(newVal===''){
+      ttOverrides[wk][key]='공강';
     }else{
       ttOverrides[wk][key]=newVal;
     }
