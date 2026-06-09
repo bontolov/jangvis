@@ -752,7 +752,7 @@ function renderMiniCal(){
   var fy=miniCalYear,fm=miniCalMonth;
   document.getElementById('mini-cal-title').textContent=(fm+1)+'월';
   var firstDay=new Date(fy,fm,1).getDay(),dim=new Date(fy,fm+1,0).getDate(),prev=new Date(fy,fm,0).getDate();
-  var ddayDates=ddays.map(function(d){return d.date;});
+  var ddayDates=(ddays||[]).map(function(d){return d.date;});
   var html='';
   // 요일 헤더 - 일요일 빨간색, 토요일 파란색
   ['일','월','화','수','목','금','토'].forEach(function(d,i){
