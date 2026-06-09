@@ -168,13 +168,18 @@ body{
 .pin-section-label{font-size:11px;font-weight:700;color:var(--t4);letter-spacing:.07em;text-transform:uppercase;flex:1}
 .pin-add-btn{font-size:12px;color:var(--ac);font-weight:600;cursor:pointer;padding:2px 0}
 .pin-add-btn:hover{opacity:.75}
-.memo-card{padding:10px 12px;border-radius:7px;border:0.5px solid var(--bd2);background:var(--item);margin-bottom:6px}
-.memo-text{font-size:13px;color:var(--t2);line-height:1.55}
-.memo-time{font-size:11px;color:var(--t4);margin-top:3px}
-.memo-text[contenteditable]{cursor:text;min-height:1em;word-break:break-word}
-.memo-text[contenteditable]:focus{outline:none;box-shadow:0 0 0 1.5px var(--ac);border-radius:2px;padding:0 2px}
-.memo-card.drag-over{border-color:var(--ac)!important;background:var(--ac-bg)!important}
-.memo-page-dots{display:flex;justify-content:center;gap:5px;margin-top:8px}
+/* memo list: 포스트잇 그리드 */
+#memo-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.memo-card{padding:0;border-radius:8px;border:0.5px solid var(--bd2);background:var(--warn-bg);display:flex;flex-direction:column;min-height:90px;overflow:hidden;transition:box-shadow .12s}
+[data-theme="dark"] .memo-card{background:var(--warn-bg)}
+.memo-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.1)}
+.memo-card-top{display:flex;align-items:center;padding:5px 7px 4px;border-bottom:0.5px solid rgba(0,0,0,.06);gap:4px}
+.memo-body{flex:1;padding:7px 10px 4px}
+.memo-text{font-size:12px;color:var(--t2);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.memo-time{font-size:10px;color:var(--t4);padding:2px 10px 5px}
+.memo-text[contenteditable]{cursor:text;min-height:1.5em}
+.memo-text[contenteditable]:focus{outline:none;box-shadow:0 0 0 1.5px var(--ac) inset;border-radius:2px}
+.memo-page-dots{display:flex;justify-content:center;gap:5px;margin-top:6px;grid-column:1/-1}
 .pin-sep{height:0.5px;background:var(--bd2);margin:8px 0 9px}
 .doc-card{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:7px;border:0.5px solid var(--bd2);background:var(--item);margin-bottom:6px;cursor:pointer}
 .doc-card:hover{background:var(--bd2)}
@@ -304,8 +309,8 @@ body{
 .cal-dow-cell{padding:6px 9px;font-size:12px;font-weight:700;color:var(--t4);text-align:center}
 .cal-dow-cell.sun{color:var(--danger)}
 .cal-dow-cell.sat{color:#3B82F6}
-.cal-month-grid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(80px,auto);flex:1;min-height:0;overflow-y:auto;align-content:start}
-.cal-cell{border-right:0.5px solid var(--bd);border-bottom:0.5px solid var(--bd);padding:5px 7px;cursor:default;position:relative;}
+.cal-month-grid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:auto;flex:1;min-height:0;overflow-y:auto;align-content:start}
+.cal-cell{border-right:0.5px solid var(--bd);border-bottom:0.5px solid var(--bd);padding:5px 7px;cursor:default;position:relative;min-height:90px;}
 .cal-cell:nth-child(7n){border-right:none}
 .cal-cell.other-month .cell-date-num{color:var(--bd2)}
 .cal-cell.today .cell-date-wrap{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--ac);margin-bottom:2px}
@@ -407,11 +412,11 @@ body{
 .cal-day.today.cal-dday{border-color:rgba(255,255,255,.6)}
 .cal-day.today.cal-dday::before{border-right-color:rgba(255,255,255,.75)}
 /* 메모 드래그 스타일 */
-.memo-drag-handle{cursor:grab;color:var(--t4);font-size:13px;padding:1px 2px;flex-shrink:0;user-select:none;touch-action:none;opacity:.5;transition:opacity .12s}
-.memo-drag-handle:hover{opacity:1}
-.memo-drag-handle:active{cursor:grabbing}
-.memo-card.memo-dragging{opacity:.3;transition:opacity .15s}
-.memo-gap{height:44px;border-radius:7px;background:var(--ac-bg);border:1.5px dashed var(--ac);margin-bottom:6px;transition:height .15s}
+.memo-drag-handle{cursor:grab;color:var(--t4);font-size:13px;flex:1;user-select:none;touch-action:none;opacity:.5;transition:opacity .12s;display:flex;align-items:center}
+.memo-drag-handle:hover{opacity:.9}
+.memo-drag-handle:active{cursor:grabbing;opacity:1}
+.memo-card.memo-dragging{opacity:.25;transform:scale(.97)}
+.memo-gap{border-radius:8px;background:var(--ac-bg);border:1.5px dashed var(--ac);min-height:90px}
 /* 일정 검색 */
 .col2-search-in{width:100%;font-size:13px;padding:3px 8px;border:0.5px solid var(--bd2);border-radius:5px;background:var(--item);color:var(--t1);font-family:inherit;outline:none}
 .col2-search-in:focus{border-color:var(--ac)}
@@ -1025,14 +1030,15 @@ function renderPinboard(){
     pageItems.forEach(function(m,li){
       var gi=start+li;
       mh+='<div class="memo-card" id="memo-card-'+gi+'">'
-        +'<div style="display:flex;align-items:flex-start;gap:6px">'
-        +'<div class="memo-drag-handle" onpointerdown="memoPtrDown(event,'+gi+')" title="드래그하여 순서 변경"><i class="ti ti-grip-vertical"></i></div>'
-        +'<div style="flex:1;min-width:0">'
-        +'<div class="memo-text" contenteditable="true" onblur="saveMemoEdit('+gi+',this)" onkeydown="if(event.key===\'Escape\')this.blur()">'+escHtml(m.text)+'</div>'
-        +'<div class="memo-time">'+escHtml(m.time||'')+'</div>'
+        +'<div class="memo-card-top">'
+        +'<div class="memo-drag-handle" onpointerdown="memoPtrDown(event,'+gi+')" title="드래그하여 순서 변경"><i class="ti ti-grip-horizontal"></i></div>'
+        +'<span style="font-size:15px;line-height:1;color:var(--t4);cursor:pointer;flex-shrink:0" onclick="removeMemo('+gi+')">×</span>'
         +'</div>'
-        +'<span style="font-size:16px;line-height:1;color:var(--t4);cursor:pointer;flex-shrink:0" onclick="removeMemo('+gi+')">×</span>'
-        +'</div></div>';
+        +'<div class="memo-body">'
+        +'<div class="memo-text" contenteditable="true" onblur="saveMemoEdit('+gi+',this)" onkeydown="if(event.key===\'Escape\')this.blur()">'+escHtml(m.text)+'</div>'
+        +'</div>'
+        +'<div class="memo-time">'+escHtml(m.time||'')+'</div>'
+        +'</div>';
     });
     if(totalPages>1){
       mh+='<div class="memo-page-dots">';
@@ -1079,9 +1085,10 @@ function addMemo(){
 function removeMemo(gi){if(!confirm('메모를 삭제할까요?'))return;memos.splice(gi,1);saveMemos();renderPinboard();}
 function setMemoPage(p){memoPage=p;renderPinboard();}
 function saveMemoEdit(gi,el){
-  var newText=el.innerText.trim();
+  // innerText preserves \n from <br> and <div> line breaks
+  var newText=el.innerText.replace(/\n{3,}/g,'\n\n').replace(/^\n+|\n+$/g,'');
   if(gi<0||gi>=memos.length){return;}
-  if(!newText){el.innerHTML=escHtml(memos[gi].text);return;}
+  if(!newText){el.innerText=memos[gi].text;return;}
   if(newText===memos[gi].text)return;
   memos[gi].text=newText;
   var now=new Date();
@@ -1115,12 +1122,16 @@ function _memoMove(e){
   e.preventDefault();
   _drag.ghost.style.left=(e.clientX-_drag.ox)+'px';
   _drag.ghost.style.top=(e.clientY-_drag.oy)+'px';
-  // 삽입 위치 계산
+  // 2D 그리드 삽입 위치 계산 (읽기 순서: 위→아래, 좌→우)
   var cards=Array.from(document.querySelectorAll('.memo-card:not(.memo-dragging)'));
   var insertBefore=-1;
   for(var i=0;i<cards.length;i++){
     var r=cards[i].getBoundingClientRect();
-    if(e.clientY<r.top+r.height*0.5){
+    var midY=r.top+r.height*0.5;
+    var midX=r.left+r.width*0.5;
+    // 커서가 이 카드의 중앙(Y)보다 위에 있거나,
+    // 같은 행이고 중앙(X)보다 왼쪽에 있으면 이 카드 앞에 삽입
+    if(e.clientY<midY-4||(Math.abs(e.clientY-midY)<=r.height*0.5&&e.clientX<midX)){
       insertBefore=parseInt(cards[i].id.replace('memo-card-',''),10);
       break;
     }
