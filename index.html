@@ -449,26 +449,55 @@ body{
 .stu-vbtn-wrap{display:flex;gap:3px;margin-left:auto}
 .stu-vb{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:7px;font-size:12px;font-weight:500;border:0.5px solid var(--bd2);background:var(--card);color:var(--t3);cursor:pointer;font-family:inherit;transition:all .12s}
 .stu-vb.active{background:var(--ac);color:#fff;border-color:var(--ac)}
-/* 카드 뷰 */
-#stu-view-list{flex:1;overflow-y:auto;padding:2px 20px 20px;min-height:0}
-.stu-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
-.stu-card{background:var(--card);border:0.5px solid var(--bd2);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .15s;display:flex;flex-direction:column}
-.stu-card:hover{border-color:var(--ac);box-shadow:0 4px 18px rgba(0,0,0,.09);transform:translateY(-1px)}
-.stu-card.sel{border-color:var(--ac);background:var(--ac-bg)}
-.stu-card-img{width:100%;height:100px;object-fit:cover;object-position:center top;display:block;background:var(--item)}
-.stu-card-av{width:100%;height:100px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;flex-shrink:0}
-.stu-card-body{padding:11px 12px 12px;display:flex;flex-direction:column;gap:7px;flex:1}
-.stu-card-row1{display:flex;align-items:center;gap:6px}
-.stu-card-name{font-size:13px;font-weight:700;color:var(--t1);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.stu-card-num{font-size:11px;color:var(--t4);flex-shrink:0}
-.stu-card-contacts{display:flex;flex-direction:column;gap:3px}
-.stu-crow{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t3)}
-.stu-crow i{font-size:12px;color:var(--t4);flex-shrink:0;width:13px}
-.stu-crow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* 테이블 뷰 */
+#stu-view-list{flex:1;overflow-y:auto;padding:0 20px 20px;min-height:0}
 .stu-tag-m{display:inline-flex;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;background:#EFF6FF;color:#3B82F6;flex-shrink:0}
 .stu-tag-f{display:inline-flex;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;background:#FDF2F8;color:#EC4899;flex-shrink:0}
-.stu-health-badge{font-size:10px;padding:1px 6px;border-radius:6px;background:#FEF3C7;color:#92400E;border:0.5px solid #FCD34D;width:fit-content}
-.stu-count-row{font-size:12px;color:var(--t4);padding:0 0 6px}
+.stu-health-badge{font-size:10px;padding:1px 6px;border-radius:6px;background:#FEF3C7;color:#92400E;border:0.5px solid #FCD34D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px;display:inline-block}
+.stu-count-row{font-size:12px;color:var(--t4);padding:6px 0 8px}
+.stu-tbl-wrap{overflow-x:auto;border:0.5px solid var(--bd2);border-radius:12px}
+.stu-tbl{width:100%;border-collapse:collapse;table-layout:fixed;background:var(--card)}
+.stu-tbl-th{padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--t4);letter-spacing:.04em;white-space:nowrap;cursor:pointer;user-select:none;border-bottom:0.5px solid var(--bd2);background:var(--surf);position:sticky;top:0;z-index:2;transition:color .12s}
+.stu-tbl-th:hover{color:var(--ac)}
+.stu-tbl-th.sorted{color:var(--ac)}
+.sort-ic{font-size:10px;margin-left:3px;opacity:.5}
+.stu-tbl-th.sorted .sort-ic{opacity:1;color:var(--ac)}
+.stu-tr{cursor:pointer;border-bottom:0.5px solid var(--bd2);transition:background .1s}
+.stu-tr:last-child{border-bottom:none}
+.stu-tr:hover{background:var(--item)}
+.stu-tr.sel{background:var(--ac-bg)}
+.stu-tr.local-added td:first-child{border-left:2.5px solid var(--ac)}
+.stu-td{padding:9px 12px;font-size:12px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;max-width:0}
+.stu-td-av{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:10px;font-weight:700;flex-shrink:0;margin-right:6px;vertical-align:middle}
+.stu-td-name{display:flex;align-items:center;min-width:0;overflow:hidden}
+.stu-td-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stu-del-btn{width:22px;height:22px;border-radius:5px;border:0.5px solid var(--bd2);background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t4);font-size:12px;transition:all .12s;font-family:inherit;vertical-align:middle}
+.stu-del-btn:hover{background:var(--danger-bg);color:var(--danger);border-color:var(--danger)}
+/* 추가 버튼 */
+.stu-add-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:var(--ac);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .12s;white-space:nowrap}
+.stu-add-btn:hover{background:var(--ac-d)}
+/* 반 필터 칩 */
+.stu-class-chips{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.stu-cc{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;border:0.5px solid var(--bd2);background:var(--card);color:var(--t3);cursor:pointer;transition:all .12s;white-space:nowrap}
+.stu-cc:hover{border-color:var(--ac);color:var(--ac)}
+.stu-cc.ac{color:#fff;border-color:transparent}
+/* 모달 */
+.stu-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.stu-modal{background:var(--surf);border-radius:16px;border:0.5px solid var(--bd);width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.stu-modal-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:0.5px solid var(--bd);position:sticky;top:0;background:var(--surf);z-index:1}
+.stu-modal-title{font-size:15px;font-weight:700;color:var(--t1)}
+.stu-modal-body{padding:20px;display:flex;flex-direction:column;gap:14px}
+.stu-modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stu-field{display:flex;flex-direction:column;gap:5px}
+.stu-field.wide{grid-column:1/-1}
+.stu-field label{font-size:11px;font-weight:700;color:var(--t4);letter-spacing:.04em;text-transform:uppercase}
+.stu-field input,.stu-field select,.stu-field textarea{padding:8px 11px;border:0.5px solid var(--bd2);border-radius:8px;background:var(--card);color:var(--t1);font-size:13px;font-family:inherit;outline:none;transition:border-color .12s}
+.stu-field input:focus,.stu-field select:focus,.stu-field textarea:focus{border-color:var(--ac)}
+.stu-field textarea{resize:vertical;min-height:60px}
+.stu-modal-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:0.5px solid var(--bd)}
+.stu-modal-cancel{padding:8px 16px;border-radius:8px;border:0.5px solid var(--bd2);background:var(--item);color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.stu-modal-save{padding:8px 18px;border-radius:8px;border:none;background:var(--ac);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .12s}
+.stu-modal-save:hover{background:var(--ac-d)}
 /* 지도 뷰 */
 #stu-view-map{flex:1;display:none;flex-direction:column;min-height:0;position:relative}
 #stu-map-el{flex:1}
@@ -520,11 +549,11 @@ body{
 /* 반응형 */
 @media(max-width:768px){
   .stu-hdr,#stu-toolbar,.stu-stats-bar{padding-left:12px;padding-right:12px}
-  #stu-view-list{padding:2px 12px 76px}
-  .stu-cards{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}
-  .stu-card-img,.stu-card-av{height:80px}
+  #stu-view-list{padding:0 12px 76px}
   .stu-detail{width:100%;border-left:none}
   .stu-map-legend{bottom:80px}
+  .stu-tbl-th:nth-child(5),.stu-td:nth-child(5),
+  .stu-tbl-th:nth-child(6),.stu-td:nth-child(6){display:none}
 }
 
 /* ══ 하단 모바일 내비게이션 ══ */
@@ -2066,6 +2095,12 @@ var stuMapReady=false;
 var stuGeoCache={};
 var STU_CLASS_COLORS=['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#F97316','#06B6D4'];
 var stuClassColorMap={};var stuClassColorIdx=0;
+var stuSortCol='';var stuSortDir=1;
+var stuClassFilter='all';
+var stuLocalAdded=[];   /* 로컬 추가 학생 */
+var stuLocalDeleted={}; /* 삭제된 _ri 목록 */
+(function(){try{var la=localStorage.getItem('jangvis-stu-added');if(la)stuLocalAdded=JSON.parse(la)||[];}catch(e){}
+try{var ld=localStorage.getItem('jangvis-stu-deleted');if(ld)stuLocalDeleted=JSON.parse(ld)||{};}catch(e){}})();
 
 function stuOnPageOpen(){
   if(stuLoaded&&stuAllData.length){stuMapKeys();stuRenderShell();return;}
@@ -2216,16 +2251,28 @@ function stuClassColor(cls){
 /* ── 셸 렌더링 (1회) ── */
 function stuRenderShell(){
   var gKey=_skeys.gender;
+  var allData=stuAllData.concat(stuLocalAdded);
   var tm=0,tf=0;
-  if(gKey)stuAllData.forEach(function(s){var g=stuNormGender(s[gKey]);if(g==='m')tm++;else if(g==='f')tf++;});
+  if(gKey)allData.forEach(function(s){var g=stuNormGender(s[gKey]);if(g==='m')tm++;else if(g==='f')tf++;});
 
   var statsHtml='<div class="stu-stats-bar">'
-    +'<span class="stu-stat"><i class="ti ti-users" style="font-size:12px"></i>전체&nbsp;<b>'+stuAllData.length+'</b>명</span>';
+    +'<span class="stu-stat"><i class="ti ti-users" style="font-size:12px"></i>전체&nbsp;<b>'+allData.length+'</b>명</span>';
   if(gKey){
     statsHtml+='<span class="stu-stat male"><i class="ti ti-gender-male" style="font-size:13px;color:#3B82F6"></i>남&nbsp;<b>'+tm+'</b>명</span>';
     statsHtml+='<span class="stu-stat female"><i class="ti ti-gender-female" style="font-size:13px;color:#EC4899"></i>여&nbsp;<b>'+tf+'</b>명</span>';
   }
   statsHtml+='</div>';
+
+  /* 반 목록 동적 생성 */
+  var classes=[];var classSet={};
+  allData.forEach(function(s){var c=stuGetClass(s);if(!classSet[c]){classSet[c]=true;classes.push(c);}});
+  classes.sort(function(a,b){return a.localeCompare(b,'ko');});
+  var classChips='<div class="stu-class-chips"><button class="stu-cc ac" id="scc-all" onclick="stuSetClass(\'all\')">전체</button>';
+  classes.forEach(function(c){
+    var col=stuClassColor(c);
+    classChips+='<button class="stu-cc" id="scc-'+escHtml(c)+'" onclick="stuSetClass(\''+escHtml(c)+'\')" style="border-color:'+col+';color:'+col+'">'+escHtml(c)+'</button>';
+  });
+  classChips+='</div>';
 
   var genderBtns='';
   if(gKey){
@@ -2237,52 +2284,75 @@ function stuRenderShell(){
   }
 
   var toolbarHtml='<div id="stu-toolbar">'
-    +'<div class="stu-search"><i class="ti ti-search"></i><input id="stu-s-inp" type="text" placeholder="이름·연락처·주소 검색…"></div>'
+    +'<div class="stu-search"><i class="ti ti-search"></i><input id="stu-s-inp" type="text" placeholder="이름·학번·연락처 검색…"></div>'
     +genderBtns
     +'<div class="stu-vbtn-wrap">'
-    +'<button class="stu-vb active" id="svb-list" onclick="stuToggleView(\'list\')"><i class="ti ti-layout-grid"></i>목록</button>'
+    +'<button class="stu-vb active" id="svb-list" onclick="stuToggleView(\'list\')"><i class="ti ti-table"></i>목록</button>'
     +'<button class="stu-vb" id="svb-map" onclick="stuToggleView(\'map\')"><i class="ti ti-map-pin"></i>지도</button>'
-    +'</div></div>';
+    +'</div>'
+    +'<button class="stu-add-btn" onclick="stuShowAddModal()"><i class="ti ti-user-plus" style="font-size:14px"></i>학생 추가</button>'
+    +'</div>';
 
   var sc=document.getElementById('stu-content');
-  sc.innerHTML=statsHtml+toolbarHtml
-    +'<div id="stu-view-list" style="flex:1;overflow-y:auto;padding:2px 20px 20px;min-height:0">'
+  sc.innerHTML=statsHtml
+    +'<div style="padding:4px 20px 0;flex-shrink:0">'+classChips+'</div>'
+    +toolbarHtml
+    +'<div id="stu-view-list" style="flex:1;overflow-y:auto;padding:0 20px 20px;min-height:0">'
     +'<div class="stu-count-row" id="stu-count-row"></div>'
-    +'<div class="stu-cards" id="stu-cards"></div>'
+    +'<div class="stu-tbl-wrap"><table class="stu-tbl" id="stu-tbl"></table></div>'
     +'</div>'
     +'<div id="stu-view-map" style="flex:1;display:none;flex-direction:column;min-height:0;position:relative">'
     +'<div id="stu-map-el" style="flex:1"></div>'
     +'<div class="stu-map-legend" id="stu-map-legend" style="display:none"></div>'
     +'</div>';
 
-  /* 검색창 이벤트 - DOM에 직접 attach */
+  /* 검색창 이벤트 */
   var inp=sc.querySelector('#stu-s-inp');
   if(inp){
-    inp.addEventListener('input',function(){stuQuery=this.value;stuUpdateCards();});
-    inp.addEventListener('keydown',function(e){if(e.key==='Escape'){this.value='';stuQuery='';stuUpdateCards();}});
+    inp.addEventListener('input',function(){stuQuery=this.value;stuUpdateTable();});
+    inp.addEventListener('keydown',function(e){if(e.key==='Escape'){this.value='';stuQuery='';stuUpdateTable();}});
   }
 
   /* 새로고침 버튼 표시 */
   var rb=document.getElementById('stu-refresh-btn');
   if(rb)rb.style.display='flex';
 
-  stuUpdateCards();
+  stuUpdateTable();
 }
 
-/* ── 카드 그리드 업데이트 (검색/필터마다) ── */
-function stuUpdateCards(){
-  var filtered=stuAllData.filter(function(s){
+/* ── 테이블 업데이트 (검색/필터/정렬마다) ── */
+function stuUpdateTable(){
+  var allData=stuAllData.concat(stuLocalAdded);
+  /* 삭제된 항목 제외 */
+  var filtered=allData.filter(function(s){
+    if(stuLocalDeleted[s._ri])return false;
     if(stuQuery){
       var q=stuQuery.toLowerCase();
-      if(!stuHeaders.some(function(h){return (s[h]||'').toLowerCase().indexOf(q)>=0;}))return false;
+      var matched=false;
+      stuHeaders.forEach(function(h){if((s[h]||'').toLowerCase().indexOf(q)>=0)matched=true;});
+      if(_skeys.name&&(s[_skeys.name]||'').toLowerCase().indexOf(q)>=0)matched=true;
+      if(!matched)return false;
     }
     if(stuGenderFilter!=='all'&&_skeys.gender){
       var g=stuNormGender(s[_skeys.gender]);
       if(stuGenderFilter==='m'&&g!=='m')return false;
       if(stuGenderFilter==='f'&&g!=='f')return false;
     }
+    if(stuClassFilter!=='all'){
+      if(stuGetClass(s)!==stuClassFilter)return false;
+    }
     return true;
   });
+
+  /* 정렬 */
+  if(stuSortCol){
+    filtered.sort(function(a,b){
+      var av=(a[stuSortCol]||'').toString();var bv=(b[stuSortCol]||'').toString();
+      var n1=parseFloat(av),n2=parseFloat(bv);
+      var cmp=(!isNaN(n1)&&!isNaN(n2))?(n1-n2):av.localeCompare(bv,'ko');
+      return cmp*stuSortDir;
+    });
+  }
 
   /* 성별 버튼 상태 */
   ['all','m','f'].forEach(function(g){
@@ -2294,51 +2364,96 @@ function stuUpdateCards(){
     else btn.style.cssText='';
   });
 
+  /* 반 칩 상태 */
+  var allChip=document.getElementById('scc-all');
+  if(allChip){allChip.className='stu-cc'+(stuClassFilter==='all'?' ac':'');allChip.style.cssText=stuClassFilter==='all'?'background:var(--ac);color:#fff;border-color:var(--ac)':'';}
+  document.querySelectorAll('.stu-cc:not(#scc-all)').forEach(function(btn){
+    var c=btn.textContent;var col=stuClassColor(c);
+    var isSel=stuClassFilter===c;
+    btn.className='stu-cc'+(isSel?' ac':'');
+    btn.style.cssText=isSel?'background:'+col+';color:#fff;border-color:'+col:'border-color:'+col+';color:'+col;
+  });
+
   var cr=document.getElementById('stu-count-row');
-  if(cr)cr.textContent=filtered.length+'명 표시';
+  if(cr)cr.textContent=filtered.length+'명 표시 (전체 '+allData.filter(function(s){return !stuLocalDeleted[s._ri];}).length+'명)';
 
-  var grid=document.getElementById('stu-cards');
-  if(!grid)return;
+  var tbl=document.getElementById('stu-tbl');
+  if(!tbl)return;
 
-  if(!filtered.length){grid.innerHTML='<div class="stu-empty">검색 결과가 없습니다.</div>';return;}
+  if(!filtered.length){tbl.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--t4);font-size:13px">검색 결과가 없습니다.</td></tr>';return;}
 
-  var html='';
+  /* 컬럼 정의 */
+  var cols=[
+    {key:_skeys.num||'',label:'학번',w:'68px'},
+    {key:_skeys.name||'',label:'이름',w:''},
+    {key:_skeys.gender||'',label:'성별',w:'52px'},
+    {key:_skeys.cls||'',label:'반',w:'52px'},
+    {key:_skeys.phone||'',label:'연락처',w:'114px'},
+    {key:_skeys.pphone||'',label:'학부모',w:'114px'},
+    {key:_skeys.health||'',label:'건강',w:'100px'},
+    {key:'_del',label:'',w:'38px'}
+  ];
+
+  var thHtml='<thead><tr>';
+  cols.forEach(function(c){
+    var isSorted=stuSortCol===c.key&&c.key!=='_del'&&c.key!=='';
+    var arrow=c.key&&c.key!=='_del'?'<span class="sort-ic">'+(isSorted?(stuSortDir===1?'↑':'↓'):'↕')+'</span>':'';
+    var cls='stu-tbl-th'+(isSorted?' sorted':'');
+    var onclick=c.key&&c.key!=='_del'?(' onclick="stuSortBy(\''+c.key+'\')"'):'';
+    thHtml+='<th class="'+cls+'"'+onclick+(c.w?' style="width:'+c.w+'"':'')+'>'+c.label+arrow+'</th>';
+  });
+  thHtml+='</tr></thead>';
+
+  var tbHtml='<tbody>';
   filtered.forEach(function(s){
     var isSel=stuSelectedIdx===s._ri;
+    var isLocal=s._local;
     var name=s[_skeys.name]||'?';
     var num=_skeys.num?s[_skeys.num]||'':'';
     var gender=_skeys.gender?stuNormGender(s[_skeys.gender]):'';
     var phone=_skeys.phone?s[_skeys.phone]||'':'';
     var pphone=_skeys.pphone?s[_skeys.pphone]||'':'';
     var health=_skeys.health?s[_skeys.health]||'':'';
-    var photoSrc=_skeys.photo?stuPhotoUrl(s[_skeys.photo]):null;
+    var cls=stuGetClass(s);
+    var clsColor=stuClassColor(cls);
 
-    /* 사진/아바타 */
-    var photoArea;
-    if(photoSrc){
-      photoArea='<img class="stu-card-img" src="'+photoSrc+'" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
-        +'<div class="stu-card-av" style="display:none;'+(gender==='m'?'background:#EFF6FF;color:#3B82F6':gender==='f'?'background:#FDF2F8;color:#EC4899':'background:var(--item);color:var(--t3)')+'">'+escHtml(name.length>1?name[1]:name[0])+'</div>';
-    }else{
-      var avBg=gender==='m'?'background:#EFF6FF;color:#3B82F6':gender==='f'?'background:#FDF2F8;color:#EC4899':'background:var(--item);color:var(--t3)';
-      photoArea='<div class="stu-card-av" style="'+avBg+'">'+escHtml(name.length>1?name[1]:name[0])+'</div>';
-    }
+    /* 아바타 */
+    var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
+    var avColor=gender==='m'?'#3B82F6':gender==='f'?'#EC4899':'var(--t3)';
+    var avChar=name.length>1?name[1]:name[0];
 
     var gTag=gender==='m'?'<span class="stu-tag-m">남</span>':gender==='f'?'<span class="stu-tag-f">여</span>':'';
-    var healthBadge=health?'<div class="stu-health-badge">⚕ '+escHtml(health.length>10?health.substring(0,10)+'…':health)+'</div>':'';
+    var healthBadge=health?'<span class="stu-health-badge" title="'+escHtml(health)+'">'+escHtml(health)+'</span>':'<span style="color:var(--t4)">—</span>';
+    var clsBadge=cls?'<span style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700;background:'+clsColor+'22;color:'+clsColor+'">'+escHtml(cls)+'</span>':'<span style="color:var(--t4)">—</span>';
 
-    html+='<div class="stu-card'+(isSel?' sel':'')+'" onclick="showStudentDetail('+s._ri+')">'
-      +photoArea
-      +'<div class="stu-card-body">'
-      +'<div class="stu-card-row1"><div class="stu-card-name">'+escHtml(name)+'</div>'+gTag+'</div>'
-      +(num?'<div style="font-size:10px;color:var(--t4)">'+escHtml(num)+'</div>':'')
-      +'<div class="stu-card-contacts">'
-      +(phone?'<div class="stu-crow"><i class="ti ti-phone"></i><span>'+escHtml(phone)+'</span></div>':'')
-      +(pphone?'<div class="stu-crow"><i class="ti ti-users"></i><span>'+escHtml(pphone)+'</span></div>':'')
-      +'</div>'
-      +healthBadge
-      +'</div></div>';
+    tbHtml+='<tr class="stu-tr'+(isSel?' sel':'')+(isLocal?' local-added':'')+'" onclick="showStudentDetail('+s._ri+')" data-ri="'+s._ri+'">'
+      +'<td class="stu-td" style="color:var(--t4);font-size:11px">'+escHtml(num)+'</td>'
+      +'<td class="stu-td">'
+        +'<div class="stu-td-name">'
+          +'<span class="stu-td-av" style="background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</span>'
+          +'<span style="font-weight:600">'+escHtml(name)+'</span>'
+        +'</div>'
+      +'</td>'
+      +'<td class="stu-td">'+gTag+'</td>'
+      +'<td class="stu-td">'+clsBadge+'</td>'
+      +'<td class="stu-td" style="color:var(--t3)">'+escHtml(phone||'—')+'</td>'
+      +'<td class="stu-td" style="color:var(--t3)">'+escHtml(pphone||'—')+'</td>'
+      +'<td class="stu-td">'+healthBadge+'</td>'
+      +'<td class="stu-td" style="text-align:center">'
+        +'<button class="stu-del-btn" onclick="event.stopPropagation();stuDeleteStudent('+s._ri+')" title="삭제"><i class="ti ti-trash" style="font-size:12px"></i></button>'
+      +'</td>'
+      +'</tr>';
   });
-  grid.innerHTML=html;
+  tbHtml+='</tbody>';
+  tbl.innerHTML=thHtml+tbHtml;
+}
+
+function stuSortBy(col){
+  if(stuSortCol===col){stuSortDir*=-1;}else{stuSortCol=col;stuSortDir=1;}
+  stuUpdateTable();
+}
+function stuSetClass(cls){
+  stuClassFilter=cls;stuUpdateTable();
 }
 
 /* ── 뷰 전환 ── */
@@ -2501,39 +2616,111 @@ function stuRenderMap(){
   }else{processNext(0);}
 }
 
+/* ── 학생 추가 모달 ── */
+function stuShowAddModal(){
+  var existing=document.getElementById('stu-add-modal');
+  if(existing)existing.remove();
+  var classes=[];var classSet={};
+  stuAllData.concat(stuLocalAdded).forEach(function(s){var c=stuGetClass(s);if(!classSet[c]){classSet[c]=true;classes.push(c);}});
+  classes.sort(function(a,b){return a.localeCompare(b,'ko');});
+  var classOpts=classes.map(function(c){return '<option value="'+escHtml(c)+'">'+escHtml(c)+'</option>';}).join('');
+  var modal=document.createElement('div');
+  modal.className='stu-modal-bg';modal.id='stu-add-modal';
+  modal.innerHTML='<div class="stu-modal">'
+    +'<div class="stu-modal-hd"><span class="stu-modal-title"><i class="ti ti-user-plus" style="margin-right:6px;vertical-align:-2px"></i>학생 추가</span>'
+    +'<button onclick="document.getElementById(\'stu-add-modal\').remove()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--t4);line-height:1">✕</button></div>'
+    +'<div class="stu-modal-body">'
+    +'<div class="stu-modal-row">'
+    +'<div class="stu-field"><label>이름 *</label><input id="sam-name" type="text" placeholder="홍길동"></div>'
+    +'<div class="stu-field"><label>학번</label><input id="sam-num" type="text" placeholder="20101"></div>'
+    +'</div>'
+    +'<div class="stu-modal-row">'
+    +'<div class="stu-field"><label>성별</label>'
+    +'<select id="sam-gender"><option value="">선택 안함</option><option value="남">남</option><option value="여">여</option></select></div>'
+    +'<div class="stu-field"><label>반</label>'
+    +'<select id="sam-cls"><option value="">기타</option>'+classOpts+'</select></div>'
+    +'</div>'
+    +'<div class="stu-modal-row">'
+    +'<div class="stu-field"><label>학생 연락처</label><input id="sam-phone" type="tel" placeholder="010-0000-0000"></div>'
+    +'<div class="stu-field"><label>학부모 연락처</label><input id="sam-pphone" type="tel" placeholder="010-0000-0000"></div>'
+    +'</div>'
+    +'<div class="stu-field wide"><label>주소</label><input id="sam-addr" type="text" placeholder="서울시 …"></div>'
+    +'<div class="stu-modal-row">'
+    +'<div class="stu-field"><label>생년월일</label><input id="sam-dob" type="text" placeholder="2013.01.01"></div>'
+    +'<div class="stu-field"><label>건강</label><input id="sam-health" type="text" placeholder="천식, 알레르기 등"></div>'
+    +'</div>'
+    +'<div class="stu-field wide"><label>비고</label><textarea id="sam-note" placeholder="메모…"></textarea></div>'
+    +'<p style="font-size:11px;color:var(--t4);margin-top:-4px">※ 로컬 추가 항목은 Google Sheets에 반영되지 않습니다.</p>'
+    +'</div>'
+    +'<div class="stu-modal-ft">'
+    +'<button class="stu-modal-cancel" onclick="document.getElementById(\'stu-add-modal\').remove()">취소</button>'
+    +'<button class="stu-modal-save" onclick="stuSaveNewStudent()"><i class="ti ti-check" style="margin-right:4px"></i>저장</button>'
+    +'</div></div>';
+  modal.addEventListener('click',function(e){if(e.target===modal)modal.remove();});
+  document.body.appendChild(modal);
+  setTimeout(function(){var n=document.getElementById('sam-name');if(n)n.focus();},50);
+}
+
+function stuSaveNewStudent(){
+  var name=(document.getElementById('sam-name')||{}).value||'';
+  if(!name.trim()){alert('이름을 입력해 주세요.');return;}
+  var newRi='local_'+Date.now();
+  var s={_ri:newRi,_local:true};
+  if(_skeys.name)s[_skeys.name]=name.trim();
+  if(_skeys.num)s[_skeys.num]=(document.getElementById('sam-num')||{}).value||'';
+  if(_skeys.gender)s[_skeys.gender]=(document.getElementById('sam-gender')||{}).value||'';
+  if(_skeys.cls)s[_skeys.cls]=(document.getElementById('sam-cls')||{}).value||'';
+  else s['나너']=(document.getElementById('sam-cls')||{}).value||'';
+  if(_skeys.phone)s[_skeys.phone]=(document.getElementById('sam-phone')||{}).value||'';
+  if(_skeys.pphone)s[_skeys.pphone]=(document.getElementById('sam-pphone')||{}).value||'';
+  if(_skeys.addr)s[_skeys.addr]=(document.getElementById('sam-addr')||{}).value||'';
+  if(_skeys.dob)s[_skeys.dob]=(document.getElementById('sam-dob')||{}).value||'';
+  if(_skeys.health)s[_skeys.health]=(document.getElementById('sam-health')||{}).value||'';
+  if(_skeys.note)s[_skeys.note]=(document.getElementById('sam-note')||{}).value||'';
+  stuLocalAdded.push(s);
+  try{localStorage.setItem('jangvis-stu-added',JSON.stringify(stuLocalAdded));}catch(e){}
+  var modal=document.getElementById('stu-add-modal');if(modal)modal.remove();
+  stuRenderShell();
+}
+
+function stuDeleteStudent(ri){
+  if(!confirm('이 학생을 목록에서 삭제할까요?\n(Google Sheets 원본에는 영향을 주지 않습니다)'))return;
+  stuLocalDeleted[ri]=true;
+  try{localStorage.setItem('jangvis-stu-deleted',JSON.stringify(stuLocalDeleted));}catch(e){}
+  if(stuSelectedIdx===ri){stuSelectedIdx=-1;document.getElementById('stu-detail').classList.remove('open');}
+  stuUpdateTable();
+}
+
 function renderStudents(){stuRenderShell();}
-function stuFilter(){stuUpdateCards();}
-function stuSetGender(g){stuGenderFilter=g;stuUpdateCards();}
+function stuFilter(){stuUpdateTable();}
+function stuSetGender(g){stuGenderFilter=g;stuUpdateTable();}
+function stuUpdateCards(){stuUpdateTable();}
 
 function showStudentDetail(ri){
   stuSelectedIdx=ri;
-  var s=stuAllData[ri];if(!s)return;
+  var s=typeof ri==='string'?stuLocalAdded.find(function(x){return x._ri===ri;}):stuAllData[ri];
+  if(!s)return;
   var name=s[_skeys.name]||'?';
   var num=_skeys.num?(s[_skeys.num]||''):'';
   var gender=_skeys.gender?stuNormGender(s[_skeys.gender]):'';
   var photoSrc=_skeys.photo?stuPhotoUrl(s[_skeys.photo]):null;
   var cls=stuGetClass(s);
   var clsColor=stuClassColor(cls);
-
-  /* 배너 (사진 or 아바타) */
   var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
   var avColor=gender==='m'?'#3B82F6':gender==='f'?'#EC4899':'var(--t3)';
   var avChar=name.length>1?name[1]:name[0];
   var bannerHtml='<div class="stu-d-banner">'
     +(photoSrc
-      ?'<img src="'+photoSrc+'" class="stu-d-banner img" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
+      ?'<img src="'+photoSrc+'" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
        +'<div class="stu-d-banner-av" style="display:none;background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</div>'
       :'<div class="stu-d-banner-av" style="background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</div>')
     +'<div class="stu-d-close" onclick="closeStudentDetail()"><i class="ti ti-x"></i></div>'
     +'</div>';
-
   var gTag=gender==='m'?'<span class="stu-tag-m" style="font-size:12px">남</span>':gender==='f'?'<span class="stu-tag-f" style="font-size:12px">여</span>':'';
   var nameBarHtml='<div class="stu-d-namebar">'
     +'<div class="stu-d-name">'+escHtml(name)+'&nbsp;'+gTag+'</div>'
     +'<div class="stu-d-sub">'+(num?escHtml(num)+' · ':'')+escHtml(cls)+'</div>'
     +'</div>';
-
-  /* 기본 정보 */
   function df(label,val,wide){
     var v=(val||'').trim();
     return '<div class="stu-df'+(wide?' wide':'')+'"><div class="stu-df-label">'+label+'</div>'
@@ -2544,26 +2731,19 @@ function showStudentDetail(ri){
     return '<div class="stu-df"><div class="stu-df-label">성별</div>'
       +'<div class="stu-df-val">'+(g==='m'?'<span class="stu-tag-m">남</span>':g==='f'?'<span class="stu-tag-f">여</span>':escHtml(v)||'<span class="empty">—</span>')+'</div></div>';
   }
-
   var bodyHtml='<div class="stu-d-body">';
-
-  /* 기본 정보 섹션 */
   bodyHtml+='<div class="stu-d-sec"><div class="stu-d-sec-title"><i class="ti ti-id-badge"></i>기본 정보</div>'
     +'<div class="stu-d-grid">'
     +(_skeys.num?df('학번',s[_skeys.num]):'')
     +(_skeys.dob?df('생년월일',s[_skeys.dob]):'')
     +(_skeys.gender?genderField(_skeys.gender):'')
     +'</div></div>';
-
-  /* 연락처 섹션 */
-  bodyHtml+='<div class="stu-d-sec"><div class="stu-d-sec-title"><i class="ti ti-phone"></i>연락처</div>'
+  bodyHtml+='<div class="stu-d-sec"><div class="stu-d-sec-title"><i class="ti ti-phone"></i>연락정보</div>'
     +'<div class="stu-d-grid">'
     +(_skeys.phone?df('학생',s[_skeys.phone]):'')
     +(_skeys.pphone?df('학부모',s[_skeys.pphone]):'')
     +(_skeys.addr?df('주소',s[_skeys.addr],true):'')
     +'</div></div>';
-
-  /* 건강 섹션 */
   if(_skeys.health||_skeys.healthc){
     bodyHtml+='<div class="stu-d-sec"><div class="stu-d-sec-title"><i class="ti ti-heart-plus"></i>건강</div>'
       +'<div class="stu-d-grid">'
@@ -2571,30 +2751,27 @@ function showStudentDetail(ri){
       +(_skeys.healthc?df('건강상담',s[_skeys.healthc],!_skeys.health):'')
       +'</div></div>';
   }
-
-  /* 비고 */
   if(_skeys.note&&s[_skeys.note]){
     bodyHtml+='<div class="stu-d-sec"><div class="stu-d-sec-title"><i class="ti ti-notes"></i>비고</div>'
       +'<div class="stu-d-grid">'+df('메모',s[_skeys.note],true)+'</div></div>';
   }
   bodyHtml+='</div>';
-
   var panel=document.getElementById('stu-detail');
   panel.innerHTML=bannerHtml+nameBarHtml+bodyHtml;
   panel.classList.add('open');
-  stuUpdateCards();
+  stuUpdateTable();
 }
 
 function closeStudentDetail(){
   stuSelectedIdx=-1;
   document.getElementById('stu-detail').classList.remove('open');
-  stuUpdateCards();
+  stuUpdateTable();
 }
 
 /* 패널 바깥 클릭 닫기 */
 document.addEventListener('click',function(e){
   var panel=document.getElementById('stu-detail');
-  if(panel&&panel.classList.contains('open')&&!panel.contains(e.target)&&!e.target.closest('.stu-card'))
+  if(panel&&panel.classList.contains('open')&&!panel.contains(e.target)&&!e.target.closest('.stu-tr')&&!e.target.closest('.stu-modal-bg'))
     closeStudentDetail();
 });
 
@@ -2602,51 +2779,26 @@ document.addEventListener('click',function(e){
 var mobileTab='home';
 function showMobileTab(tab){
   mobileTab=tab;
-  // 하단 네비 active 표시
   document.querySelectorAll('.mobile-nav-item').forEach(function(it){
     it.classList.toggle('active',it.dataset.tab===tab);
   });
-  // 탭별 페이지/컬럼 전환
   if(tab==='home'){
-    // 워크스페이스 홈: #col3 + #col4 보임, col2 숨김
-    var c2=document.getElementById('col2');
-    var c3=document.getElementById('col3');
-    var c4=document.getElementById('col4');
-    if(c2)c2.style.display='none';
-    if(c3)c3.style.display='';
-    if(c4)c4.style.display='';
+    var c2=document.getElementById('col2');var c3=document.getElementById('col3');var c4=document.getElementById('col4');
+    if(c2)c2.style.display='none';if(c3)c3.style.display='';if(c4)c4.style.display='';
     showPage('workspace');
   }else if(tab==='schedule'){
-    // col2(일정)만 보임
-    var c2=document.getElementById('col2');
-    var c3=document.getElementById('col3');
-    var c4=document.getElementById('col4');
-    if(c2){c2.style.display='';c2.style.width='100%';}
-    if(c3)c3.style.display='none';
-    if(c4)c4.style.display='none';
+    var c2=document.getElementById('col2');var c3=document.getElementById('col3');var c4=document.getElementById('col4');
+    if(c2){c2.style.display='';c2.style.width='100%';}if(c3)c3.style.display='none';if(c4)c4.style.display='none';
     showPage('workspace');
   }else if(tab==='pinboard'){
-    // col3 핀보드만
-    var c2=document.getElementById('col2');
-    var c3=document.getElementById('col3');
-    var c4=document.getElementById('col4');
-    if(c2)c2.style.display='none';
-    if(c3)c3.style.display='';
-    if(c4)c4.style.display='none';
-    showPage('workspace');
-    showSection('pinboard');
+    var c2=document.getElementById('col2');var c3=document.getElementById('col3');var c4=document.getElementById('col4');
+    if(c2)c2.style.display='none';if(c3)c3.style.display='';if(c4)c4.style.display='none';
+    showPage('workspace');showSection('pinboard');
   }else if(tab==='timetable'){
-    // col4 시간표만
-    var c2=document.getElementById('col2');
-    var c3=document.getElementById('col3');
-    var c4=document.getElementById('col4');
-    if(c2)c2.style.display='none';
-    if(c3)c3.style.display='none';
-    if(c4){c4.style.display='';c4.style.width='100%';}
-    showPage('workspace');
-    showSection('timetable');
+    var c2=document.getElementById('col2');var c3=document.getElementById('col3');var c4=document.getElementById('col4');
+    if(c2)c2.style.display='none';if(c3)c3.style.display='none';if(c4){c4.style.display='';c4.style.width='100%';}
+    showPage('workspace');showSection('timetable');
   }else if(tab==='calendar'){
-    // 달력 페이지
     showPage('calendar');
   }
 }
@@ -2656,18 +2808,11 @@ function applyMobileLayout(){
   var nav=document.getElementById('mobile-nav');
   if(nav)nav.style.display=isMobile?'flex':'none';
   if(isMobile){
-    // 모바일: 현재 탭에 맞는 레이아웃 적용
-    if(_prevIsMobile!==true){
-      _prevIsMobile=true;
-      showMobileTab(mobileTab);
-    }
+    if(_prevIsMobile!==true){_prevIsMobile=true;showMobileTab(mobileTab);}
   }else{
-    // 데스크탑 복원: 인라인 style 제거
     if(_prevIsMobile!==false){
       _prevIsMobile=false;
-      var c2=document.getElementById('col2');
-      var c3=document.getElementById('col3');
-      var c4=document.getElementById('col4');
+      var c2=document.getElementById('col2');var c3=document.getElementById('col3');var c4=document.getElementById('col4');
       if(c2){c2.style.display='';c2.style.width='';}
       if(c3){c3.style.display='';c3.style.width='';}
       if(c4){c4.style.display='';c4.style.width='';}
@@ -2675,7 +2820,6 @@ function applyMobileLayout(){
   }
 }
 window.addEventListener('resize',applyMobileLayout);
-// 초기 로드 시 적용 (DOM 완성 후 실행)
 document.addEventListener('DOMContentLoaded',function(){applyMobileLayout();});
 if(document.readyState==='complete'||document.readyState==='interactive'){applyMobileLayout();}
 </script>
@@ -2696,7 +2840,7 @@ if(document.readyState==='complete'||document.readyState==='interactive'){applyM
   </div>
   <div class="mobile-nav-item" data-tab="calendar" onclick="showMobileTab('calendar')">
     <i class="ti ti-calendar"></i><span>달력</span>
-  </div>
-</nav>
+  </div></nav>
+
 </body>
 </html>
