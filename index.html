@@ -11,7 +11,7 @@
 <script>
   var GOOGLE_CLIENT_ID = '909323197790-occ1jcp1a8npbgl33g4gbhgiuaudrtp8.apps.googleusercontent.com';
   var CALENDAR_SCOPE   = 'https://www.googleapis.com/auth/calendar.readonly';
-  var SHEETS_SCOPE     = 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.readonly';
+  var SHEETS_SCOPE     = 'https://www.googleapis.com/auth/spreadsheets.readonly';
   var DAYS_AHEAD       = 30;
   var STU_FILE_NAME    = '26청덕 2학년';
   var STU_SHEET_NAME   = '학생정보';
@@ -2023,16 +2023,38 @@ var stuSelectedIdx=-1;
 var stuLoaded=false;
 
 function stuOnPageOpen(){
-  // 이미 데이터 있으면 그냥 표시
   if(stuLoaded&&stuAllData.length){renderStudents();return;}
-  // 초기 화면 복원
+  // localStorage에 저장된 ID 확인
+  try{var sid=localStorage.getItem('jangvis-stu-sid');if(sid)stuSpreadsheetId=sid;}catch(e){}
+  stuShowUrlForm();
+}
+
+function stuShowUrlForm(){
+  var savedId=stuSpreadsheetId||'';
   document.getElementById('stu-content').innerHTML=
-    '<div class="stu-state" id="stu-init-wrap">'
+    '<div class="stu-state">'
     +'<i class="ti ti-table-import stu-state-icon"></i>'
     +'<div class="stu-state-title">학생 명단 연동</div>'
-    +'<div class="stu-state-sub">Google 계정으로 로그인하면<br><b>\''+escHtml(STU_FILE_NAME)+'\'</b> 파일의 '+escHtml(STU_SHEET_NAME)+' 시트를<br>자동으로 불러옵니다.</div>'
-    +'<button class="stu-google-btn" onclick="stuLogin()"><i class="ti ti-brand-google"></i>Google로 연동하기</button>'
+    +'<div class="stu-state-sub">구글 시트 URL을 붙여넣고 Google 로그인하면<br><b>'+escHtml(STU_SHEET_NAME)+'</b> 시트를 자동으로 불러옵니다.<br><span style="color:var(--t4);font-size:11px">한 번 저장하면 이후 자동 연결됩니다</span></div>'
+    +'<div style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:8px;margin-top:4px">'
+    +'<input id="stu-url-inp" type="text" placeholder="https://docs.google.com/spreadsheets/d/…" '
+    +'value="'+escHtml(savedId?'https://docs.google.com/spreadsheets/d/'+savedId:'')+'"'
+    +' style="width:100%;box-sizing:border-box;padding:9px 12px;border:0.5px solid var(--bd2);border-radius:8px;background:var(--card);color:var(--t1);font-size:13px;font-family:inherit;outline:none">'
+    +'<button class="stu-google-btn" style="width:100%;justify-content:center" onclick="stuLoginWithUrl()"><i class="ti ti-brand-google"></i>Google로 연동하기</button>'
+    +'</div>'
     +'</div>';
+}
+
+function stuLoginWithUrl(){
+  var inp=document.getElementById('stu-url-inp');
+  var url=(inp?inp.value:'').trim();
+  // URL에서 스프레드시트 ID 추출
+  var m=url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(!m&&url.match(/^[a-zA-Z0-9_-]{20,}$/))m=['',url]; // 순수 ID 입력 허용
+  if(!m){alert('올바른 구글 시트 URL을 입력해 주세요.\n예) https://docs.google.com/spreadsheets/d/XXXXXX');return;}
+  stuSpreadsheetId=m[1];
+  try{localStorage.setItem('jangvis-stu-sid',stuSpreadsheetId);}catch(e){}
+  stuLogin();
 }
 
 function stuLogin(){
@@ -2043,14 +2065,14 @@ function stuLogin(){
     callback:function(resp){
       if(resp.error){stuShowError('인증 실패: '+resp.error);return;}
       stuToken=resp.access_token;
-      stuFindFile();
+      stuLoadSheet();
     }
   }).requestAccessToken();
 }
 
 function stuRefresh(){
-  if(!stuToken){stuLogin();return;}
-  if(stuSpreadsheetId)stuLoadSheet();else stuFindFile();
+  if(!stuToken){stuShowUrlForm();return;}
+  stuLoadSheet();
 }
 
 function stuShowLoading(msg){
@@ -2063,22 +2085,10 @@ function stuShowError(msg){
     '<div class="stu-state"><i class="ti ti-alert-circle stu-state-icon" style="color:var(--danger)"></i>'
     +'<div class="stu-state-title" style="color:var(--danger)">불러오기 실패</div>'
     +'<div class="stu-state-sub">'+escHtml(msg)+'</div>'
-    +'<button class="stu-google-btn" onclick="stuLogin()"><i class="ti ti-refresh"></i>다시 시도</button></div>';
-}
-
-function stuFindFile(){
-  stuShowLoading("'"+STU_FILE_NAME+"' 파일 검색 중…");
-  var q=encodeURIComponent("name='"+STU_FILE_NAME+"' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false");
-  fetch('https://www.googleapis.com/drive/v3/files?q='+q+'&spaces=drive&fields=files(id,name)',
-    {headers:{Authorization:'Bearer '+stuToken}})
-  .then(function(r){if(!r.ok)throw new Error('Drive API 오류 ('+r.status+')');return r.json();})
-  .then(function(data){
-    if(!data.files||!data.files.length)
-      throw new Error("'"+STU_FILE_NAME+"' 파일을 찾을 수 없습니다.\n내 드라이브에 파일이 있는지 확인해 주세요.");
-    stuSpreadsheetId=data.files[0].id;
-    stuLoadSheet();
-  })
-  .catch(function(e){stuShowError(e.message);});
+    +'<div style="display:flex;gap:8px;margin-top:4px">'
+    +'<button class="stu-google-btn" onclick="stuShowUrlForm()"><i class="ti ti-link"></i>URL 재입력</button>'
+    +'<button class="stu-google-btn" onclick="stuLogin()" style="background:var(--item);color:var(--t2)"><i class="ti ti-refresh"></i>다시 시도</button>'
+    +'</div></div>';
 }
 
 function stuLoadSheet(){
