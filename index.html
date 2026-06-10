@@ -426,67 +426,105 @@ body{
 
 /* ══ 학생 관리 페이지 ══ */
 #page-students{display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg)}
+/* 헤더 */
 .stu-hdr{display:flex;align-items:center;gap:10px;padding:0 20px;height:52px;background:var(--surf);border-bottom:0.5px solid var(--bd);flex-shrink:0}
-.stu-hdr-title{font-size:16px;font-weight:700;color:var(--t1)}
-.stu-hdr-sub{font-size:12px;color:var(--t4);margin-top:1px}
-.stu-stats-bar{display:flex;gap:8px;padding:10px 20px 6px;flex-shrink:0;flex-wrap:wrap}
+.stu-hdr-title{font-size:16px;font-weight:700;color:var(--t1);flex:1}
+/* 통계 */
+.stu-stats-bar{display:flex;gap:7px;padding:12px 20px 4px;flex-shrink:0;flex-wrap:wrap}
 .stu-stat{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--card);border:0.5px solid var(--bd2);border-radius:20px;font-size:12px;color:var(--t3)}
-.stu-stat b{font-size:13px;font-weight:700;color:var(--t1)}
-.stu-stat.male b{color:#3B82F6}.stu-stat.female b{color:#EC4899}
-.stu-toolbar{display:flex;align-items:center;gap:8px;padding:6px 20px 10px;flex-shrink:0;flex-wrap:wrap}
-.stu-search{flex:1;max-width:260px;display:flex;align-items:center;gap:6px;background:var(--card);border:0.5px solid var(--bd2);border-radius:8px;padding:6px 10px;transition:border-color .12s}
+.stu-stat b{font-weight:700;color:var(--t1)}.stu-stat.male b{color:#3B82F6}.stu-stat.female b{color:#EC4899}
+/* 툴바 - 영구 유지 */
+#stu-toolbar{display:flex;align-items:center;gap:8px;padding:8px 20px 10px;flex-shrink:0;flex-wrap:wrap}
+.stu-search{flex:1;max-width:270px;display:flex;align-items:center;gap:7px;background:var(--card);border:0.5px solid var(--bd2);border-radius:9px;padding:7px 11px;transition:border-color .12s}
 .stu-search:focus-within{border-color:var(--ac)}
-.stu-search input{border:none;background:transparent;outline:none;font-size:13px;color:var(--t1);width:100%;font-family:inherit}
-.stu-search input::placeholder{color:var(--t4)}
 .stu-search i{color:var(--t4);font-size:14px;flex-shrink:0}
-.stu-filter-btns{display:flex;gap:3px}
-.stu-filter-btn{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:500;border:0.5px solid var(--bd2);background:var(--card);color:var(--t3);cursor:pointer;transition:all .12s;font-family:inherit}
-.stu-filter-btn:hover{border-color:var(--ac);color:var(--ac)}
-.stu-filter-btn.ac{background:var(--ac);color:#fff;border-color:var(--ac)}
-.stu-filter-btn.ac-m{background:#3B82F6;color:#fff;border-color:#3B82F6}
-.stu-filter-btn.ac-f{background:#EC4899;color:#fff;border-color:#EC4899}
-.stu-body{flex:1;overflow:auto;padding:0 20px 20px;min-height:0}
-.stu-table-wrap{overflow-x:auto;border-radius:10px;border:0.5px solid var(--bd);background:var(--card);margin-top:2px}
-.stu-table{width:100%;border-collapse:collapse;font-size:13px}
-.stu-table th{padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--t4);letter-spacing:.3px;border-bottom:0.5px solid var(--bd);white-space:nowrap;background:var(--surf);position:sticky;top:0;z-index:1}
-.stu-table td{padding:9px 12px;border-bottom:0.5px solid var(--bd2);color:var(--t2);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis}
-.stu-table tr:last-child td{border-bottom:none}
-.stu-row{cursor:pointer;transition:background .1s}
-.stu-row:hover td{background:var(--item)}
-.stu-row.sel td{background:var(--ac-bg)}
-.stu-num{font-size:12px;color:var(--t4);font-weight:600;text-align:center;width:44px}
-.stu-name{font-weight:600;color:var(--t1)!important}
-.stu-tag-m{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#EFF6FF;color:#3B82F6}
-.stu-tag-f{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#FDF2F8;color:#EC4899}
-/* 로그인/로딩/에러 상태 */
+#stu-s-inp{border:none;background:transparent;outline:none;font-size:13px;color:var(--t1);width:100%;font-family:inherit}
+#stu-s-inp::placeholder{color:var(--t4)}
+.stu-fbtn-wrap{display:flex;gap:3px}
+.stu-fb{padding:5px 10px;border-radius:7px;font-size:12px;font-weight:500;border:0.5px solid var(--bd2);background:var(--card);color:var(--t3);cursor:pointer;font-family:inherit;transition:all .12s}
+.stu-fb:hover{border-color:var(--ac);color:var(--ac)}
+.stu-fb.ac{background:var(--ac);color:#fff;border-color:var(--ac)}
+.stu-fb.ac-m{background:#3B82F6;color:#fff;border-color:#3B82F6}
+.stu-fb.ac-f{background:#EC4899;color:#fff;border-color:#EC4899}
+.stu-vbtn-wrap{display:flex;gap:3px;margin-left:auto}
+.stu-vb{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:7px;font-size:12px;font-weight:500;border:0.5px solid var(--bd2);background:var(--card);color:var(--t3);cursor:pointer;font-family:inherit;transition:all .12s}
+.stu-vb.active{background:var(--ac);color:#fff;border-color:var(--ac)}
+/* 카드 뷰 */
+#stu-view-list{flex:1;overflow-y:auto;padding:2px 20px 20px;min-height:0}
+.stu-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.stu-card{background:var(--card);border:0.5px solid var(--bd2);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .15s;display:flex;flex-direction:column}
+.stu-card:hover{border-color:var(--ac);box-shadow:0 4px 18px rgba(0,0,0,.09);transform:translateY(-1px)}
+.stu-card.sel{border-color:var(--ac);background:var(--ac-bg)}
+.stu-card-img{width:100%;height:100px;object-fit:cover;object-position:center top;display:block;background:var(--item)}
+.stu-card-av{width:100%;height:100px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;flex-shrink:0}
+.stu-card-body{padding:11px 12px 12px;display:flex;flex-direction:column;gap:7px;flex:1}
+.stu-card-row1{display:flex;align-items:center;gap:6px}
+.stu-card-name{font-size:13px;font-weight:700;color:var(--t1);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stu-card-num{font-size:11px;color:var(--t4);flex-shrink:0}
+.stu-card-contacts{display:flex;flex-direction:column;gap:3px}
+.stu-crow{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t3)}
+.stu-crow i{font-size:12px;color:var(--t4);flex-shrink:0;width:13px}
+.stu-crow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stu-tag-m{display:inline-flex;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;background:#EFF6FF;color:#3B82F6;flex-shrink:0}
+.stu-tag-f{display:inline-flex;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:700;background:#FDF2F8;color:#EC4899;flex-shrink:0}
+.stu-health-badge{font-size:10px;padding:1px 6px;border-radius:6px;background:#FEF3C7;color:#92400E;border:0.5px solid #FCD34D;width:fit-content}
+.stu-count-row{font-size:12px;color:var(--t4);padding:0 0 6px}
+/* 지도 뷰 */
+#stu-view-map{flex:1;display:none;flex-direction:column;min-height:0;position:relative}
+#stu-map-el{flex:1}
+.stu-map-legend{position:absolute;bottom:16px;left:16px;background:var(--surf);border:0.5px solid var(--bd);border-radius:11px;padding:10px 14px;font-size:11px;z-index:10;display:flex;flex-direction:column;gap:6px;max-height:55%;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.stu-map-legend-item{display:flex;align-items:center;gap:7px;color:var(--t2);white-space:nowrap}
+.stu-map-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(255,255,255,.8);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.stu-map-overlay{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:5}
+/* Kakao 키 입력 */
+.stu-kakao-form{display:flex;flex-direction:column;gap:10px;width:100%;max-width:380px}
+.stu-kakao-form label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:600;color:var(--t4);letter-spacing:.4px;text-transform:uppercase}
+.stu-kakao-form input{padding:8px 12px;border:0.5px solid var(--bd2);border-radius:8px;background:var(--card);color:var(--t1);font-size:13px;font-family:inherit;outline:none}
+.stu-kakao-form input:focus{border-color:var(--ac)}
+/* 상태 화면 */
 .stu-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px;text-align:center}
-.stu-state-icon{font-size:42px;color:var(--ac);opacity:.55}
+.stu-state-icon{font-size:40px;opacity:.55}
 .stu-state-title{font-size:15px;font-weight:700;color:var(--t2)}
-.stu-state-sub{font-size:12px;color:var(--t4);line-height:1.75}
-.stu-google-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;background:var(--ac);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px;transition:background .12s}
-.stu-google-btn:hover{background:var(--ac-d)}
+.stu-state-sub{font-size:12px;color:var(--t4);line-height:1.8}
+.stu-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;background:var(--ac);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .12s}
+.stu-btn:hover{background:var(--ac-d)}
+.stu-btn.ghost{background:var(--item);color:var(--t2)}
+.stu-btn.ghost:hover{background:var(--bd)}
 .stu-loading{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;color:var(--t4);font-size:13px}
 /* 상세 패널 */
-.stu-detail{position:fixed;top:0;right:0;bottom:0;width:300px;background:var(--surf);border-left:0.5px solid var(--bd);z-index:50;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .2s cubic-bezier(.4,0,.2,1);box-shadow:-6px 0 28px rgba(0,0,0,.1)}
+.stu-detail{position:fixed;top:0;right:0;bottom:0;width:320px;background:var(--surf);border-left:0.5px solid var(--bd);z-index:50;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 36px rgba(0,0,0,.13)}
 .stu-detail.open{transform:translateX(0)}
-.stu-detail-hdr{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:0.5px solid var(--bd);flex-shrink:0}
-.stu-avatar{width:44px;height:44px;border-radius:50%;background:var(--ac-bg);border:2px solid var(--ac);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--ac);flex-shrink:0}
-.stu-detail-name{font-size:15px;font-weight:700;color:var(--t1)}
-.stu-detail-meta{font-size:11px;color:var(--t4);margin-top:1px}
-.stu-detail-close{margin-left:auto;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t4);transition:background .12s;flex-shrink:0}
-.stu-detail-close:hover{background:var(--item);color:var(--t2)}
-.stu-detail-body{flex:1;overflow-y:auto;padding:8px 0}
-.stu-field{padding:9px 16px;border-bottom:0.5px solid var(--bd2)}
-.stu-field:last-child{border-bottom:none}
-.stu-field-label{font-size:10px;font-weight:600;color:var(--t4);letter-spacing:.4px;text-transform:uppercase;margin-bottom:3px}
-.stu-field-val{font-size:13px;color:var(--t1);line-height:1.5;word-break:break-all}
-.stu-field-val:empty::after{content:'—';color:var(--t4)}
+/* 상세: 사진 배너 */
+.stu-d-banner{flex-shrink:0;position:relative;height:160px;background:var(--item);overflow:hidden}
+.stu-d-banner img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.stu-d-banner-av{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:60px;font-weight:800}
+.stu-d-close{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:14px;transition:background .12s}
+.stu-d-close:hover{background:rgba(0,0,0,.6)}
+/* 상세: 이름 바 */
+.stu-d-namebar{padding:13px 16px 11px;border-bottom:0.5px solid var(--bd);flex-shrink:0}
+.stu-d-name{font-size:18px;font-weight:800;color:var(--t1);display:flex;align-items:center;gap:8px}
+.stu-d-sub{font-size:12px;color:var(--t4);margin-top:3px}
+/* 상세: 필드 섹션 */
+.stu-d-body{flex:1;overflow-y:auto;padding-bottom:16px}
+.stu-d-sec{padding:14px 16px 0}
+.stu-d-sec-title{font-size:10px;font-weight:700;color:var(--ac);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.stu-d-sec-title::after{content:'';flex:1;height:0.5px;background:var(--bd2)}
+.stu-d-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd2);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.stu-df{background:var(--card);padding:9px 12px;display:flex;flex-direction:column;gap:3px}
+.stu-df.wide{grid-column:1/-1}
+.stu-df-label{font-size:9px;font-weight:700;color:var(--t4);letter-spacing:.4px;text-transform:uppercase}
+.stu-df-val{font-size:12px;color:var(--t1);line-height:1.5;word-break:break-all}
+.stu-df-val.empty{color:var(--t4)}.stu-df-val.empty::after{content:'—'}
+/* 빈 상태 */
+.stu-empty{text-align:center;padding:40px;color:var(--t4);font-size:13px}
 /* 반응형 */
 @media(max-width:768px){
-  .stu-hdr{padding:0 12px;height:48px}
-  .stu-stats-bar,.stu-toolbar{padding-left:12px;padding-right:12px}
-  .stu-body{padding:0 12px 76px}
-  .stu-detail{width:100%;border-left:none;border-top:0.5px solid var(--bd)}
+  .stu-hdr,#stu-toolbar,.stu-stats-bar{padding-left:12px;padding-right:12px}
+  #stu-view-list{padding:2px 12px 76px}
+  .stu-cards{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}
+  .stu-card-img,.stu-card-av{height:80px}
+  .stu-detail{width:100%;border-left:none}
+  .stu-map-legend{bottom:80px}
 }
 
 /* ══ 하단 모바일 내비게이션 ══ */
@@ -2021,9 +2059,16 @@ var stuQuery='';
 var stuGenderFilter='all';
 var stuSelectedIdx=-1;
 var stuLoaded=false;
+var stuViewMode='list';
+var stuKakaoJsKey='';
+var stuKakaoRestKey='';
+var stuMapReady=false;
+var stuGeoCache={};
+var STU_CLASS_COLORS=['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#F97316','#06B6D4'];
+var stuClassColorMap={};var stuClassColorIdx=0;
 
 function stuOnPageOpen(){
-  if(stuLoaded&&stuAllData.length){renderStudents();return;}
+  if(stuLoaded&&stuAllData.length){stuMapKeys();stuRenderShell();return;}
   // localStorage에 저장된 ID 확인
   try{var sid=localStorage.getItem('jangvis-stu-sid');if(sid)stuSpreadsheetId=sid;}catch(e){}
   stuShowUrlForm();
@@ -2106,162 +2151,451 @@ function stuLoadSheet(){
       return obj;
     });
     stuQuery='';stuGenderFilter='all';stuSelectedIdx=-1;stuLoaded=true;
+    stuClassColorMap={};stuClassColorIdx=0; /* 반 색상 초기화 */
+    stuMapKeys(); /* 컬럼 키 캐시 */
     document.getElementById('stu-refresh-btn').style.display='flex';
-    renderStudents();
+    stuRenderShell();
   })
   .catch(function(e){stuShowError(e.message);});
 }
 
 /* ── 헤더 키 탐색 ── */
-function stuKey(candidates){
+function stuKey(cands){
   for(var i=0;i<stuHeaders.length;i++)
-    for(var j=0;j<candidates.length;j++)
-      if(stuHeaders[i]===candidates[j]||stuHeaders[i].indexOf(candidates[j])===0)return stuHeaders[i];
+    for(var j=0;j<cands.length;j++){
+      var h=stuHeaders[i].replace(/\s/g,''),c=cands[j].replace(/\s/g,'');
+      if(h===c||h.indexOf(c)===0)return stuHeaders[i];
+    }
   return null;
 }
-function stuNameKey(){return stuKey(['이름','성명','Name','name'])||stuHeaders[1]||stuHeaders[0];}
-function stuNumKey(){return stuKey(['번호','번','학번','No','no','출석']);}
-function stuGenderKey(){return stuKey(['성별','성','Gender','gender','구분']);}
-
-/* ── 성별 정규화 ── */
+var _skeys={};
+function stuMapKeys(){
+  _skeys.name=stuKey(['이름','성명'])||stuHeaders[1]||stuHeaders[0];
+  _skeys.num=stuKey(['학번','번호','학생번호','번']);
+  _skeys.gender=stuKey(['성별','성']);
+  _skeys.phone=stuKey(['학생연락처','학생전화','연락처','전화번호','휴대폰']);
+  _skeys.pphone=stuKey(['학부모연락처','학부모전화','부모연락처','보호자연락처']);
+  _skeys.addr=stuKey(['주소','Address']);
+  _skeys.health=stuKey(['건강']);
+  _skeys.healthc=stuKey(['건강상담','건강 상담']);
+  _skeys.note=stuKey(['비고','메모']);
+  _skeys.photo=stuKey(['사진','photo','이미지','image']);
+  _skeys.cls=stuKey(['반','학급','Class']);
+  _skeys.dob=stuKey(['생년월일','생일','출생']);
+}
 function stuNormGender(v){
   v=(v||'').trim();
   if(v==='남'||v==='남자'||v==='M'||v==='m')return 'm';
   if(v==='여'||v==='여자'||v==='F'||v==='f')return 'f';
   return '';
 }
+function stuPhotoUrl(raw){
+  if(!raw||!raw.trim())return null;raw=raw.trim();
+  var m=raw.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if(m)return 'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w300-h300';
+  m=raw.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if(m)return 'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w300-h300';
+  if(raw.match(/^https?:\/\//))return raw;
+  if(raw.match(/^[a-zA-Z0-9_-]{25,}$/))return 'https://drive.google.com/thumbnail?id='+raw+'&sz=w300-h300';
+  return null;
+}
+function stuGetClass(s){
+  if(_skeys.cls&&s[_skeys.cls])return s[_skeys.cls].trim();
+  if(_skeys.num&&s[_skeys.num]){
+    var n=String(s[_skeys.num]);
+    var m=n.match(/^[12]-?(\d+)-?\d+$/)||n.match(/^\d{2}(\d)\d{2}$/);
+    if(m)return m[1]+'반';
+  }
+  return '기타';
+}
+function stuClassColor(cls){
+  if(!stuClassColorMap[cls]){stuClassColorMap[cls]=STU_CLASS_COLORS[stuClassColorIdx%STU_CLASS_COLORS.length];stuClassColorIdx++;}
+  return stuClassColorMap[cls];
+}
 
-function renderStudents(){
-  var gKey=stuGenderKey(),nameKey=stuNameKey(),numKey=stuNumKey();
+/* ── 셸 렌더링 (1회) ── */
+function stuRenderShell(){
+  var gKey=_skeys.gender;
+  var tm=0,tf=0;
+  if(gKey)stuAllData.forEach(function(s){var g=stuNormGender(s[gKey]);if(g==='m')tm++;else if(g==='f')tf++;});
 
-  /* 필터 */
+  var statsHtml='<div class="stu-stats-bar">'
+    +'<span class="stu-stat"><i class="ti ti-users" style="font-size:12px"></i>전체&nbsp;<b>'+stuAllData.length+'</b>명</span>';
+  if(gKey){
+    statsHtml+='<span class="stu-stat male"><i class="ti ti-gender-male" style="font-size:13px;color:#3B82F6"></i>남&nbsp;<b>'+tm+'</b>명</span>';
+    statsHtml+='<span class="stu-stat female"><i class="ti ti-gender-female" style="font-size:13px;color:#EC4899"></i>여&nbsp;<b>'+tf+'</b>명</span>';
+  }
+  statsHtml+='</div>';
+
+  var genderBtns='';
+  if(gKey){
+    genderBtns='<div class="stu-fbtn-wrap">'
+      +'<button class="stu-fb ac" id="sfb-all" onclick="stuSetGender(\'all\')">전체</button>'
+      +'<button class="stu-fb" id="sfb-m" onclick="stuSetGender(\'m\')" style="color:#3B82F6;border-color:#93C5FD">남</button>'
+      +'<button class="stu-fb" id="sfb-f" onclick="stuSetGender(\'f\')" style="color:#EC4899;border-color:#F9A8D4">여</button>'
+      +'</div>';
+  }
+
+  var toolbarHtml='<div id="stu-toolbar">'
+    +'<div class="stu-search"><i class="ti ti-search"></i><input id="stu-s-inp" type="text" placeholder="이름·연락처·주소 검색…"></div>'
+    +genderBtns
+    +'<div class="stu-vbtn-wrap">'
+    +'<button class="stu-vb active" id="svb-list" onclick="stuToggleView(\'list\')"><i class="ti ti-layout-grid"></i>목록</button>'
+    +'<button class="stu-vb" id="svb-map" onclick="stuToggleView(\'map\')"><i class="ti ti-map-pin"></i>지도</button>'
+    +'</div></div>';
+
+  var sc=document.getElementById('stu-content');
+  sc.innerHTML=statsHtml+toolbarHtml
+    +'<div id="stu-view-list" style="flex:1;overflow-y:auto;padding:2px 20px 20px;min-height:0">'
+    +'<div class="stu-count-row" id="stu-count-row"></div>'
+    +'<div class="stu-cards" id="stu-cards"></div>'
+    +'</div>'
+    +'<div id="stu-view-map" style="flex:1;display:none;flex-direction:column;min-height:0;position:relative">'
+    +'<div id="stu-map-el" style="flex:1"></div>'
+    +'<div class="stu-map-legend" id="stu-map-legend" style="display:none"></div>'
+    +'</div>';
+
+  /* 검색창 이벤트 - DOM에 직접 attach */
+  var inp=sc.querySelector('#stu-s-inp');
+  if(inp){
+    inp.addEventListener('input',function(){stuQuery=this.value;stuUpdateCards();});
+    inp.addEventListener('keydown',function(e){if(e.key==='Escape'){this.value='';stuQuery='';stuUpdateCards();}});
+  }
+
+  /* 새로고침 버튼 표시 */
+  var rb=document.getElementById('stu-refresh-btn');
+  if(rb)rb.style.display='flex';
+
+  stuUpdateCards();
+}
+
+/* ── 카드 그리드 업데이트 (검색/필터마다) ── */
+function stuUpdateCards(){
   var filtered=stuAllData.filter(function(s){
     if(stuQuery){
       var q=stuQuery.toLowerCase();
       if(!stuHeaders.some(function(h){return (s[h]||'').toLowerCase().indexOf(q)>=0;}))return false;
     }
-    if(stuGenderFilter!=='all'&&gKey){
-      var g=stuNormGender(s[gKey]);
+    if(stuGenderFilter!=='all'&&_skeys.gender){
+      var g=stuNormGender(s[_skeys.gender]);
       if(stuGenderFilter==='m'&&g!=='m')return false;
       if(stuGenderFilter==='f'&&g!=='f')return false;
     }
     return true;
   });
 
-  /* 통계 */
-  var tm=0,tf=0;
-  if(gKey)stuAllData.forEach(function(s){var g=stuNormGender(s[gKey]);if(g==='m')tm++;else if(g==='f')tf++;});
+  /* 성별 버튼 상태 */
+  ['all','m','f'].forEach(function(g){
+    var btn=document.getElementById('sfb-'+g);
+    if(!btn)return;
+    btn.className='stu-fb'+(stuGenderFilter===g?' ac'+(g==='m'?' ac-m':g==='f'?' ac-f':''):'');
+    if(g==='m'&&stuGenderFilter!=='m')btn.style.cssText='color:#3B82F6;border-color:#93C5FD';
+    else if(g==='f'&&stuGenderFilter!=='f')btn.style.cssText='color:#EC4899;border-color:#F9A8D4';
+    else btn.style.cssText='';
+  });
+
+  var cr=document.getElementById('stu-count-row');
+  if(cr)cr.textContent=filtered.length+'명 표시';
+
+  var grid=document.getElementById('stu-cards');
+  if(!grid)return;
+
+  if(!filtered.length){grid.innerHTML='<div class="stu-empty">검색 결과가 없습니다.</div>';return;}
 
   var html='';
+  filtered.forEach(function(s){
+    var isSel=stuSelectedIdx===s._ri;
+    var name=s[_skeys.name]||'?';
+    var num=_skeys.num?s[_skeys.num]||'':'';
+    var gender=_skeys.gender?stuNormGender(s[_skeys.gender]):'';
+    var phone=_skeys.phone?s[_skeys.phone]||'':'';
+    var pphone=_skeys.pphone?s[_skeys.pphone]||'':'';
+    var health=_skeys.health?s[_skeys.health]||'':'';
+    var photoSrc=_skeys.photo?stuPhotoUrl(s[_skeys.photo]):null;
 
-  /* stats bar */
-  html+='<div class="stu-stats-bar">';
-  html+='<span class="stu-stat"><i class="ti ti-users" style="font-size:12px"></i>전체&nbsp;<b>'+stuAllData.length+'</b>명</span>';
-  if(gKey){
-    html+='<span class="stu-stat male"><i class="ti ti-gender-male" style="font-size:13px;color:#3B82F6"></i>남&nbsp;<b>'+tm+'</b>명</span>';
-    html+='<span class="stu-stat female"><i class="ti ti-gender-female" style="font-size:13px;color:#EC4899"></i>여&nbsp;<b>'+tf+'</b>명</span>';
-  }
-  html+='</div>';
+    /* 사진/아바타 */
+    var photoArea;
+    if(photoSrc){
+      photoArea='<img class="stu-card-img" src="'+photoSrc+'" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
+        +'<div class="stu-card-av" style="display:none;'+(gender==='m'?'background:#EFF6FF;color:#3B82F6':gender==='f'?'background:#FDF2F8;color:#EC4899':'background:var(--item);color:var(--t3)')+'">'+escHtml(name.length>1?name[1]:name[0])+'</div>';
+    }else{
+      var avBg=gender==='m'?'background:#EFF6FF;color:#3B82F6':gender==='f'?'background:#FDF2F8;color:#EC4899':'background:var(--item);color:var(--t3)';
+      photoArea='<div class="stu-card-av" style="'+avBg+'">'+escHtml(name.length>1?name[1]:name[0])+'</div>';
+    }
 
-  /* toolbar */
-  html+='<div class="stu-toolbar">';
-  html+='<div class="stu-search"><i class="ti ti-search"></i>'
-    +'<input id="stu-s-inp" type="text" placeholder="이름, 연락처 등 검색…" value="'+escHtml(stuQuery)+'"'
-    +' oninput="stuFilter(this.value)" onkeydown="if(event.key===\'Escape\'){this.value=\'\';stuFilter(\'\');}"></div>';
-  if(gKey){
-    html+='<div class="stu-filter-btns">';
-    html+='<button class="stu-filter-btn'+(stuGenderFilter==='all'?' ac':'')+'" onclick="stuSetGender(\'all\')">전체</button>';
-    html+='<button class="stu-filter-btn'+(stuGenderFilter==='m'?' ac-m':'')+'" onclick="stuSetGender(\'m\')" style="color:'+(stuGenderFilter==='m'?'#fff':'#3B82F6')+';border-color:#93C5FD">남</button>';
-    html+='<button class="stu-filter-btn'+(stuGenderFilter==='f'?' ac-f':'')+'" onclick="stuSetGender(\'f\')" style="color:'+(stuGenderFilter==='f'?'#fff':'#EC4899')+';border-color:#F9A8D4">여</button>';
-    html+='</div>';
-  }
-  html+='<span style="margin-left:auto;font-size:12px;color:var(--t4)">'+filtered.length+'명</span>';
-  html+='</div>';
+    var gTag=gender==='m'?'<span class="stu-tag-m">남</span>':gender==='f'?'<span class="stu-tag-f">여</span>':'';
+    var healthBadge=health?'<div class="stu-health-badge">⚕ '+escHtml(health.length>10?health.substring(0,10)+'…':health)+'</div>':'';
 
-  /* table */
-  html+='<div class="stu-body"><div class="stu-table-wrap"><table class="stu-table">';
-  html+='<thead><tr>';
-  stuHeaders.forEach(function(h){html+='<th>'+escHtml(h)+'</th>';});
-  html+='</tr></thead><tbody>';
-
-  if(!filtered.length){
-    html+='<tr><td colspan="'+stuHeaders.length+'" style="text-align:center;padding:36px;color:var(--t4)">검색 결과가 없습니다.</td></tr>';
-  }else{
-    filtered.forEach(function(s){
-      var isSel=stuSelectedIdx===s._ri;
-      html+='<tr class="stu-row'+(isSel?' sel':'')+'" onclick="showStudentDetail('+s._ri+')">';
-      stuHeaders.forEach(function(h){
-        var v=s[h]||'';
-        var cls='';
-        if(h===numKey)cls=' class="stu-num"';
-        else if(h===nameKey)cls=' class="stu-name"';
-        var cell;
-        if(h===gKey){
-          var g=stuNormGender(v);
-          if(g==='m')cell='<span class="stu-tag-m">남</span>';
-          else if(g==='f')cell='<span class="stu-tag-f">여</span>';
-          else cell=escHtml(v);
-        }else{cell=escHtml(v);}
-        html+='<td'+cls+' title="'+escHtml(v)+'">'+cell+'</td>';
-      });
-      html+='</tr>';
-    });
-  }
-  html+='</tbody></table></div></div>';
-
-  document.getElementById('stu-content').innerHTML=html;
-  // 검색창 포커스 유지
-  if(stuQuery){var inp=document.getElementById('stu-s-inp');if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}}
+    html+='<div class="stu-card'+(isSel?' sel':'')+'" onclick="showStudentDetail('+s._ri+')">'
+      +photoArea
+      +'<div class="stu-card-body">'
+      +'<div class="stu-card-row1"><div class="stu-card-name">'+escHtml(name)+'</div>'+gTag+'</div>'
+      +(num?'<div style="font-size:10px;color:var(--t4)">'+escHtml(num)+'</div>':'')
+      +'<div class="stu-card-contacts">'
+      +(phone?'<div class="stu-crow"><i class="ti ti-phone"></i><span>'+escHtml(phone)+'</span></div>':'')
+      +(pphone?'<div class="stu-crow"><i class="ti ti-users"></i><span>'+escHtml(pphone)+'</span></div>':'')
+      +'</div>'
+      +healthBadge
+      +'</div></div>';
+  });
+  grid.innerHTML=html;
 }
 
-function stuFilter(q){stuQuery=q.trim();renderStudents();}
-function stuSetGender(g){stuGenderFilter=g;renderStudents();}
+/* ── 뷰 전환 ── */
+function stuToggleView(mode){
+  stuViewMode=mode;
+  var lv=document.getElementById('stu-view-list');
+  var mv=document.getElementById('stu-view-map');
+  var vbl=document.getElementById('svb-list');
+  var vbm=document.getElementById('svb-map');
+  if(mode==='list'){
+    if(lv)lv.style.display='';if(mv)mv.style.display='none';
+    if(vbl)vbl.className='stu-vb active';if(vbm)vbm.className='stu-vb';
+  }else{
+    if(lv)lv.style.display='none';if(mv){mv.style.display='flex';mv.style.flexDirection='column';}
+    if(vbl)vbl.className='stu-vb';if(vbm)vbm.className='stu-vb active';
+    stuInitMap();
+  }
+}
+
+/* ── 카카오맵 ── */
+function stuInitMap(){
+  var mapEl=document.getElementById('stu-map-el');
+  if(!mapEl)return;
+  /* Kakao 키 로드 */
+  try{
+    var k=localStorage.getItem('jangvis-kakao-keys');
+    if(k){var kk=JSON.parse(k);stuKakaoJsKey=kk.js||'';stuKakaoRestKey=kk.rest||'';}
+  }catch(e){}
+  if(!stuKakaoJsKey||!stuKakaoRestKey){stuShowKakaoSetup();return;}
+  if(typeof kakao!=='undefined'&&kakao.maps){stuRenderMap();return;}
+  /* SDK 동적 로드 */
+  var s=document.createElement('script');
+  s.src='//dapi.kakao.com/v2/maps/sdk.js?appkey='+encodeURIComponent(stuKakaoJsKey)+'&libraries=services&autoload=false';
+  s.onload=function(){kakao.maps.load(function(){stuRenderMap();});};
+  s.onerror=function(){stuShowKakaoSetup('SDK 로드 실패. JS 앱키를 확인해 주세요.');};
+  document.head.appendChild(s);
+}
+
+function stuShowKakaoSetup(err){
+  var mapEl=document.getElementById('stu-map-el');
+  if(!mapEl)return;
+  mapEl.innerHTML='<div class="stu-map-overlay" style="background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px;text-align:center">'
+    +(err?'<div style="color:var(--danger);font-size:13px">⚠ '+escHtml(err)+'</div>':'')
+    +'<i class="ti ti-map-pin" style="font-size:36px;color:var(--ac);opacity:.6"></i>'
+    +'<div style="font-size:14px;font-weight:700;color:var(--t2)">카카오맵 API 키 입력</div>'
+    +'<div style="font-size:12px;color:var(--t4);line-height:1.8">카카오 개발자센터에서<br>JavaScript 앱키와 REST API 키를 입력하세요</div>'
+    +'<div class="stu-kakao-form">'
+    +'<label>JavaScript 앱키<input id="sk-js" type="text" placeholder="JavaScript 앱키" value="'+escHtml(stuKakaoJsKey)+'"></label>'
+    +'<label>REST API 키<input id="sk-rest" type="text" placeholder="REST API 키" value="'+escHtml(stuKakaoRestKey)+'"></label>'
+    +'</div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button class="stu-btn" onclick="stuSaveKakaoKeys()"><i class="ti ti-check"></i>저장 후 지도 열기</button>'
+    +'<a href="https://developers.kakao.com/console/app" target="_blank" class="stu-btn ghost"><i class="ti ti-external-link"></i>키 발급</a>'
+    +'</div></div>';
+}
+
+function stuSaveKakaoKeys(){
+  var js=(document.getElementById('sk-js')||{}).value||'';
+  var rest=(document.getElementById('sk-rest')||{}).value||'';
+  if(!js||!rest){alert('두 키 모두 입력해 주세요.');return;}
+  stuKakaoJsKey=js.trim();stuKakaoRestKey=rest.trim();
+  try{localStorage.setItem('jangvis-kakao-keys',JSON.stringify({js:stuKakaoJsKey,rest:stuKakaoRestKey}));}catch(e){}
+  /* SDK 새로 로드 */
+  var mapEl=document.getElementById('stu-map-el');
+  if(mapEl)mapEl.innerHTML='<div class="stu-map-overlay"><div class="spinner"></div><span>지도 로딩 중…</span></div>';
+  var s=document.createElement('script');
+  s.src='//dapi.kakao.com/v2/maps/sdk.js?appkey='+encodeURIComponent(stuKakaoJsKey)+'&libraries=services&autoload=false';
+  s.onload=function(){kakao.maps.load(function(){stuRenderMap();});};
+  s.onerror=function(){stuShowKakaoSetup('SDK 로드 실패. JS 앱키를 확인해 주세요.');};
+  document.head.appendChild(s);
+}
+
+function stuRenderMap(){
+  var mapEl=document.getElementById('stu-map-el');
+  if(!mapEl)return;
+  mapEl.innerHTML='<div id="kakao-map-canvas" style="width:100%;height:100%"></div>'
+    +'<div id="stu-geocode-progress" style="position:absolute;top:10px;right:10px;background:var(--surf);border:0.5px solid var(--bd);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--t3);z-index:5">주소 변환 중…</div>';
+
+  var map=new kakao.maps.Map(document.getElementById('kakao-map-canvas'),{
+    center:new kakao.maps.LatLng(37.5665,126.9780),level:8
+  });
+
+  /* 주소 → 좌표 변환 후 마커 */
+  var gc=new kakao.maps.services.Geocoder();
+  var students=stuAllData.filter(function(s){return _skeys.addr&&s[_skeys.addr]&&s[_skeys.addr].trim();});
+  var done=0,total=students.length;
+  var bounds=new kakao.maps.LatLngBounds();
+  var legends={};
+
+  function addMarker(s,lat,lng){
+    var cls=stuGetClass(s);
+    var color=stuClassColor(cls);
+    var latlng=new kakao.maps.LatLng(lat,lng);
+    bounds.extend(latlng);
+    legends[cls]=color;
+
+    var name=s[_skeys.name]||'?';
+    var overlayContent='<div style="background:'+color+';width:14px;height:14px;border-radius:50%;'
+      +'border:2px solid rgba(255,255,255,.85);box-shadow:0 2px 6px rgba(0,0,0,.3);cursor:pointer;'
+      +'transition:transform .1s" onmouseover="this.style.transform=\'scale(1.5)\'" onmouseout="this.style.transform=\'\'"></div>';
+    var overlay=new kakao.maps.CustomOverlay({position:latlng,content:overlayContent,zIndex:1});
+    overlay.setMap(map);
+
+    /* 클릭 시 인포윈도우 */
+    var iwContent='<div style="padding:10px 14px;font-size:12px;min-width:140px">'
+      +'<b style="font-size:13px">'+escHtml(name)+'</b><br>'
+      +(s[_skeys.addr]?'<span style="color:#888;font-size:11px">'+escHtml(s[_skeys.addr])+'</span>':'')
+      +'</div>';
+    var iw=new kakao.maps.InfoWindow({content:iwContent,removable:true});
+    overlay.getContent().addEventListener&&overlay.getContent().addEventListener('click',function(){
+      iw.setPosition(latlng);iw.open(map);
+    });
+  }
+
+  function processNext(i){
+    if(i>=students.length){
+      /* 완료 */
+      var pr=document.getElementById('stu-geocode-progress');
+      if(pr)pr.style.display='none';
+      if(done>0)map.setBounds(bounds);
+      /* 범례 */
+      var lgEl=document.getElementById('stu-map-legend');
+      if(lgEl){
+        var lgHtml='<b style="font-size:11px;color:var(--t2);margin-bottom:3px;display:block">반별 색상</b>';
+        Object.keys(legends).sort().forEach(function(cls){
+          lgHtml+='<div class="stu-map-legend-item"><div class="stu-map-dot" style="background:'+legends[cls]+'"></div>'+escHtml(cls)+'</div>';
+        });
+        lgEl.innerHTML=lgHtml;lgEl.style.display=legends&&Object.keys(legends).length?'flex':'none';
+      }
+      return;
+    }
+    var s=students[i];
+    var addr=(s[_skeys.addr]||'').trim();
+    if(!addr){processNext(i+1);return;}
+    /* 캐시 확인 */
+    if(stuGeoCache[addr]){
+      addMarker(s,stuGeoCache[addr][0],stuGeoCache[addr][1]);done++;processNext(i+1);return;
+    }
+    /* Kakao REST geocoding */
+    fetch('https://dapi.kakao.com/v2/local/search/address.json?query='+encodeURIComponent(addr),
+      {headers:{Authorization:'KakaoAK '+stuKakaoRestKey}})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      var pr=document.getElementById('stu-geocode-progress');
+      if(pr)pr.textContent=(i+1)+'/'+total+' 변환 중…';
+      if(data.documents&&data.documents.length){
+        var d=data.documents[0];
+        var lat=parseFloat(d.y),lng=parseFloat(d.x);
+        stuGeoCache[addr]=[lat,lng];
+        addMarker(s,lat,lng);done++;
+      }
+      setTimeout(function(){processNext(i+1);},80); // rate limit
+    })
+    .catch(function(){setTimeout(function(){processNext(i+1);},80);});
+  }
+
+  if(!students.length){
+    var pr=document.getElementById('stu-geocode-progress');
+    if(pr)pr.textContent='주소 데이터가 없습니다.';
+  }else{processNext(0);}
+}
+
+function renderStudents(){stuRenderShell();}
+function stuFilter(){stuUpdateCards();}
+function stuSetGender(g){stuGenderFilter=g;stuUpdateCards();}
 
 function showStudentDetail(ri){
   stuSelectedIdx=ri;
   var s=stuAllData[ri];if(!s)return;
-  var nameKey=stuNameKey(),numKey=stuNumKey(),gKey=stuGenderKey();
-  var name=s[nameKey]||'?';
-  var num=numKey?s[numKey]+'번':'';
-  var gender=gKey?stuNormGender(s[gKey]):'';
+  var name=s[_skeys.name]||'?';
+  var num=_skeys.num?(s[_skeys.num]||''):'';
+  var gender=_skeys.gender?stuNormGender(s[_skeys.gender]):'';
+  var photoSrc=_skeys.photo?stuPhotoUrl(s[_skeys.photo]):null;
+  var cls=stuGetClass(s);
+  var clsColor=stuClassColor(cls);
 
-  var av=document.getElementById('stu-d-avatar');
-  av.textContent=name.length>1?name[1]:name[0];
-  if(gender==='m'){av.style.cssText='background:#EFF6FF;color:#3B82F6;border-color:#3B82F6';}
-  else if(gender==='f'){av.style.cssText='background:#FDF2F8;color:#EC4899;border-color:#EC4899';}
-  else{av.style.cssText='';}
+  /* 배너 (사진 or 아바타) */
+  var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
+  var avColor=gender==='m'?'#3B82F6':gender==='f'?'#EC4899':'var(--t3)';
+  var avChar=name.length>1?name[1]:name[0];
+  var bannerHtml='<div class="stu-d-banner">'
+    +(photoSrc
+      ?'<img src="'+photoSrc+'" class="stu-d-banner img" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
+       +'<div class="stu-d-banner-av" style="display:none;background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</div>'
+      :'<div class="stu-d-banner-av" style="background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</div>')
+    +'<div class="stu-d-close" onclick="closeStudentDetail()"><i class="ti ti-x"></i></div>'
+    +'</div>';
 
-  document.getElementById('stu-d-name').textContent=name;
-  document.getElementById('stu-d-meta').textContent=num+(gender==='m'?' · 남':gender==='f'?' · 여':'');
+  var gTag=gender==='m'?'<span class="stu-tag-m" style="font-size:12px">남</span>':gender==='f'?'<span class="stu-tag-f" style="font-size:12px">여</span>':'';
+  var nameBarHtml='<div class="stu-d-namebar">'
+    +'<div class="stu-d-name">'+escHtml(name)+'&nbsp;'+gTag+'</div>'
+    +'<div class="stu-d-sub">'+(num?escHtml(num)+' · ':'')+escHtml(cls)+'</div>'
+    +'</div>';
 
-  var bodyHtml='';
-  stuHeaders.forEach(function(h){
-    var v=s[h]||'';
-    var valHtml;
-    if(h===gKey){
-      var g=stuNormGender(v);
-      valHtml=g==='m'?'<span class="stu-tag-m">남</span>':g==='f'?'<span class="stu-tag-f">여</span>':escHtml(v);
-    }else{valHtml='<div class="stu-field-val">'+escHtml(v)+'</div>';}
-    bodyHtml+='<div class="stu-field"><div class="stu-field-label">'+escHtml(h)+'</div>'+valHtml+'</div>';
-  });
-  document.getElementById('stu-d-body').innerHTML=bodyHtml;
-  document.getElementById('stu-detail').classList.add('open');
-  renderStudents();
+  /* 기본 정보 */
+  function df(label,val,wide){
+    var v=(val||'').trim();
+    return '<div class="stu-df'+(wide?' wide':'')+'"><div class="stu-df-label">'+label+'</div>'
+      +'<div class="stu-df-val'+(v?'':' empty')+'">'+escHtml(v)+'</div></div>';
+  }
+  function genderField(key){
+    var v=(s[key]||'').trim();var g=stuNormGender(v);
+    return '<div class="stu-df"><div class="stu-df-label">성별</div>'
+      +'<div class="stu-df-val">'+(g==='m'?'<span class="stu-tag-m">남</span>':g==='f'?'<span class="stu-tag-f">여</span>':escHtml(v)||'<span class="empty">—</span>')+'</div></div>';
+  }
+
+  var bodyHtml='<div class="stu-d-body">';
+
+  /* 기본 정보 섹션 */
+  bodyHtml+='<div class="stu-d-sec"><div class="stu-d-sec-title"><i class="ti ti-id-badge"></i>기본 정보</div>'
+    +'<div class="stu-d-grid">'
+    +(_skeys.num?df('학번',s[_skeys.num]):'')
+    +(_skeys.dob?df('생년월일',s[_skeys.dob]):'')
+    +(_skeys.gender?genderField(_skeys.gender):'')
+    +'</div></div>';
+
+  /* 연락처 섹션 */
+  bodyHtml+='<div class="stu-d-sec"><div class="stu-d-sec-title"><i class="ti ti-phone"></i>연락처</div>'
+    +'<div class="stu-d-grid">'
+    +(_skeys.phone?df('학생',s[_skeys.phone]):'')
+    +(_skeys.pphone?df('학부모',s[_skeys.pphone]):'')
+    +(_skeys.addr?df('주소',s[_skeys.addr],true):'')
+    +'</div></div>';
+
+  /* 건강 섹션 */
+  if(_skeys.health||_skeys.healthc){
+    bodyHtml+='<div class="stu-d-sec"><div class="stu-d-sec-title"><i class="ti ti-heart-plus"></i>건강</div>'
+      +'<div class="stu-d-grid">'
+      +(_skeys.health?df('건강',s[_skeys.health],!_skeys.healthc):'')
+      +(_skeys.healthc?df('건강상담',s[_skeys.healthc],!_skeys.health):'')
+      +'</div></div>';
+  }
+
+  /* 비고 */
+  if(_skeys.note&&s[_skeys.note]){
+    bodyHtml+='<div class="stu-d-sec"><div class="stu-d-sec-title"><i class="ti ti-notes"></i>비고</div>'
+      +'<div class="stu-d-grid">'+df('메모',s[_skeys.note],true)+'</div></div>';
+  }
+  bodyHtml+='</div>';
+
+  var panel=document.getElementById('stu-detail');
+  panel.innerHTML=bannerHtml+nameBarHtml+bodyHtml;
+  panel.classList.add('open');
+  stuUpdateCards();
 }
 
 function closeStudentDetail(){
   stuSelectedIdx=-1;
   document.getElementById('stu-detail').classList.remove('open');
-  renderStudents();
+  stuUpdateCards();
 }
 
-/* 패널 바깥 클릭 시 닫기 */
+/* 패널 바깥 클릭 닫기 */
 document.addEventListener('click',function(e){
   var panel=document.getElementById('stu-detail');
-  if(panel&&panel.classList.contains('open')&&!panel.contains(e.target)){
-    var row=e.target.closest('.stu-row');
-    if(!row)closeStudentDetail();
-  }
+  if(panel&&panel.classList.contains('open')&&!panel.contains(e.target)&&!e.target.closest('.stu-card'))
+    closeStudentDetail();
 });
 
 /* ══ 반응형: 모바일 탭 ══ */
