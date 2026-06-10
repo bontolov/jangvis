@@ -11,7 +11,10 @@
 <script>
   var GOOGLE_CLIENT_ID = '909323197790-occ1jcp1a8npbgl33g4gbhgiuaudrtp8.apps.googleusercontent.com';
   var CALENDAR_SCOPE   = 'https://www.googleapis.com/auth/calendar.readonly';
+  var SHEETS_SCOPE     = 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.readonly';
   var DAYS_AHEAD       = 30;
+  var STU_FILE_NAME    = '26청덕 2학년';
+  var STU_SHEET_NAME   = '학생정보';
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
@@ -421,6 +424,71 @@ body{
 .col2-search-in{width:100%;font-size:13px;padding:3px 8px;border:0.5px solid var(--bd2);border-radius:5px;background:var(--item);color:var(--t1);font-family:inherit;outline:none}
 .col2-search-in:focus{border-color:var(--ac)}
 
+/* ══ 학생 관리 페이지 ══ */
+#page-students{display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg)}
+.stu-hdr{display:flex;align-items:center;gap:10px;padding:0 20px;height:52px;background:var(--surf);border-bottom:0.5px solid var(--bd);flex-shrink:0}
+.stu-hdr-title{font-size:16px;font-weight:700;color:var(--t1)}
+.stu-hdr-sub{font-size:12px;color:var(--t4);margin-top:1px}
+.stu-stats-bar{display:flex;gap:8px;padding:10px 20px 6px;flex-shrink:0;flex-wrap:wrap}
+.stu-stat{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--card);border:0.5px solid var(--bd2);border-radius:20px;font-size:12px;color:var(--t3)}
+.stu-stat b{font-size:13px;font-weight:700;color:var(--t1)}
+.stu-stat.male b{color:#3B82F6}.stu-stat.female b{color:#EC4899}
+.stu-toolbar{display:flex;align-items:center;gap:8px;padding:6px 20px 10px;flex-shrink:0;flex-wrap:wrap}
+.stu-search{flex:1;max-width:260px;display:flex;align-items:center;gap:6px;background:var(--card);border:0.5px solid var(--bd2);border-radius:8px;padding:6px 10px;transition:border-color .12s}
+.stu-search:focus-within{border-color:var(--ac)}
+.stu-search input{border:none;background:transparent;outline:none;font-size:13px;color:var(--t1);width:100%;font-family:inherit}
+.stu-search input::placeholder{color:var(--t4)}
+.stu-search i{color:var(--t4);font-size:14px;flex-shrink:0}
+.stu-filter-btns{display:flex;gap:3px}
+.stu-filter-btn{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:500;border:0.5px solid var(--bd2);background:var(--card);color:var(--t3);cursor:pointer;transition:all .12s;font-family:inherit}
+.stu-filter-btn:hover{border-color:var(--ac);color:var(--ac)}
+.stu-filter-btn.ac{background:var(--ac);color:#fff;border-color:var(--ac)}
+.stu-filter-btn.ac-m{background:#3B82F6;color:#fff;border-color:#3B82F6}
+.stu-filter-btn.ac-f{background:#EC4899;color:#fff;border-color:#EC4899}
+.stu-body{flex:1;overflow:auto;padding:0 20px 20px;min-height:0}
+.stu-table-wrap{overflow-x:auto;border-radius:10px;border:0.5px solid var(--bd);background:var(--card);margin-top:2px}
+.stu-table{width:100%;border-collapse:collapse;font-size:13px}
+.stu-table th{padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--t4);letter-spacing:.3px;border-bottom:0.5px solid var(--bd);white-space:nowrap;background:var(--surf);position:sticky;top:0;z-index:1}
+.stu-table td{padding:9px 12px;border-bottom:0.5px solid var(--bd2);color:var(--t2);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+.stu-table tr:last-child td{border-bottom:none}
+.stu-row{cursor:pointer;transition:background .1s}
+.stu-row:hover td{background:var(--item)}
+.stu-row.sel td{background:var(--ac-bg)}
+.stu-num{font-size:12px;color:var(--t4);font-weight:600;text-align:center;width:44px}
+.stu-name{font-weight:600;color:var(--t1)!important}
+.stu-tag-m{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#EFF6FF;color:#3B82F6}
+.stu-tag-f{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600;background:#FDF2F8;color:#EC4899}
+/* 로그인/로딩/에러 상태 */
+.stu-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px;text-align:center}
+.stu-state-icon{font-size:42px;color:var(--ac);opacity:.55}
+.stu-state-title{font-size:15px;font-weight:700;color:var(--t2)}
+.stu-state-sub{font-size:12px;color:var(--t4);line-height:1.75}
+.stu-google-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;background:var(--ac);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px;transition:background .12s}
+.stu-google-btn:hover{background:var(--ac-d)}
+.stu-loading{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;color:var(--t4);font-size:13px}
+/* 상세 패널 */
+.stu-detail{position:fixed;top:0;right:0;bottom:0;width:300px;background:var(--surf);border-left:0.5px solid var(--bd);z-index:50;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .2s cubic-bezier(.4,0,.2,1);box-shadow:-6px 0 28px rgba(0,0,0,.1)}
+.stu-detail.open{transform:translateX(0)}
+.stu-detail-hdr{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:0.5px solid var(--bd);flex-shrink:0}
+.stu-avatar{width:44px;height:44px;border-radius:50%;background:var(--ac-bg);border:2px solid var(--ac);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--ac);flex-shrink:0}
+.stu-detail-name{font-size:15px;font-weight:700;color:var(--t1)}
+.stu-detail-meta{font-size:11px;color:var(--t4);margin-top:1px}
+.stu-detail-close{margin-left:auto;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t4);transition:background .12s;flex-shrink:0}
+.stu-detail-close:hover{background:var(--item);color:var(--t2)}
+.stu-detail-body{flex:1;overflow-y:auto;padding:8px 0}
+.stu-field{padding:9px 16px;border-bottom:0.5px solid var(--bd2)}
+.stu-field:last-child{border-bottom:none}
+.stu-field-label{font-size:10px;font-weight:600;color:var(--t4);letter-spacing:.4px;text-transform:uppercase;margin-bottom:3px}
+.stu-field-val{font-size:13px;color:var(--t1);line-height:1.5;word-break:break-all}
+.stu-field-val:empty::after{content:'—';color:var(--t4)}
+/* 반응형 */
+@media(max-width:768px){
+  .stu-hdr{padding:0 12px;height:48px}
+  .stu-stats-bar,.stu-toolbar{padding-left:12px;padding-right:12px}
+  .stu-body{padding:0 12px 76px}
+  .stu-detail{width:100%;border-left:none;border-top:0.5px solid var(--bd)}
+}
+
 /* ══ 하단 모바일 내비게이션 ══ */
 .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--surf);border-top:0.5px solid var(--bd);z-index:200;align-items:stretch}
 .mobile-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--t4);font-size:10px;font-weight:500;transition:color .12s;-webkit-tap-highlight-color:transparent;user-select:none;padding:6px 0}
@@ -529,7 +597,7 @@ body{
   <nav class="sb-nav">
     <div class="ws-item" onclick="showPage('workspace')"><i class="ti ti-layout-dashboard"></i><span class="ws-label">워크스페이스</span></div>
     <div class="sec-label">업무</div>
-    <div class="nav-item" onclick="showPage('workspace')"><i class="ti ti-users"></i><span class="nav-label">학생 관리</span></div>
+    <div class="nav-item" id="nav-students" onclick="showPage('students')"><i class="ti ti-users"></i><span class="nav-label">학생 관리</span></div>
     <div class="nav-item" onclick="showPage('workspace')"><i class="ti ti-shield-check"></i><span class="nav-label">생활지도</span></div>
     <div class="nav-item" onclick="showPage('workspace')"><i class="ti ti-message-circle"></i><span class="nav-label">상담 기록</span></div>
     <div class="nav-item" onclick="showPage('workspace')"><i class="ti ti-chart-bar"></i><span class="nav-label">성적 관리</span></div>
@@ -670,6 +738,42 @@ body{
       </div>
     </div>
   </div>
+</div>
+
+<!-- ════ 학생 관리 페이지 ════ -->
+<div id="page-students">
+  <!-- 헤더 -->
+  <div class="stu-hdr">
+    <i class="ti ti-users" style="font-size:17px;color:var(--t3)"></i>
+    <div>
+      <div class="stu-hdr-title">학생 관리</div>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+      <div class="col-nav-btn" id="stu-refresh-btn" onclick="stuRefresh()" title="새로고침" style="display:none"><i class="ti ti-refresh"></i></div>
+    </div>
+  </div>
+  <!-- 컨텐츠 영역 (JS로 채워짐) -->
+  <div id="stu-content" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">
+    <div class="stu-state" id="stu-init-wrap">
+      <i class="ti ti-table-import stu-state-icon"></i>
+      <div class="stu-state-title">학생 명단 연동</div>
+      <div class="stu-state-sub">Google 계정으로 로그인하면<br><b>'26청덕 2학년'</b> 파일의 학생정보 시트를<br>자동으로 불러옵니다.</div>
+      <button class="stu-google-btn" onclick="stuLogin()"><i class="ti ti-brand-google"></i>Google로 연동하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 학생 상세 슬라이드 패널 -->
+<div class="stu-detail" id="stu-detail">
+  <div class="stu-detail-hdr">
+    <div class="stu-avatar" id="stu-d-avatar"></div>
+    <div style="min-width:0">
+      <div class="stu-detail-name" id="stu-d-name"></div>
+      <div class="stu-detail-meta" id="stu-d-meta"></div>
+    </div>
+    <div class="stu-detail-close" onclick="closeStudentDetail()"><i class="ti ti-x"></i></div>
+  </div>
+  <div class="stu-detail-body" id="stu-d-body"></div>
 </div>
 
 <!-- ════ 일정관리 페이지 ════ -->
@@ -848,13 +952,24 @@ function showPage(page){
   curPage=page;
   var ws=document.getElementById('page-workspace');
   var cal=document.getElementById('page-calendar');
+  var stu=document.getElementById('page-students');
   var navCal=document.getElementById('nav-calendar');
+  var navStu=document.getElementById('nav-students');
+  // 모두 숨김
+  ws.style.display='none';
+  cal.style.display='none';
+  if(stu)stu.style.display='none';
+  navCal.classList.remove('active');
+  if(navStu)navStu.classList.remove('active');
   if(page==='calendar'){
-    ws.style.display='none';cal.style.display='flex';
+    cal.style.display='flex';
     navCal.classList.add('active');renderCalPage();
+  } else if(page==='students'){
+    if(stu){stu.style.display='flex';}
+    if(navStu)navStu.classList.add('active');
+    stuOnPageOpen();
   } else {
-    ws.style.display='flex';cal.style.display='none';
-    navCal.classList.remove('active');
+    ws.style.display='flex';
   }
 }
 
@@ -1895,6 +2010,248 @@ document.addEventListener('keydown',function(e){
   else if(k==='N')calNewEvent();
   else if(k==='ARROWLEFT')calNav(-1);
   else if(k==='ARROWRIGHT')calNav(1);
+});
+
+/* ══ 학생 관리 (Google Sheets 연동) ══ */
+var stuToken=null;
+var stuSpreadsheetId=null;
+var stuHeaders=[];
+var stuAllData=[];
+var stuQuery='';
+var stuGenderFilter='all';
+var stuSelectedIdx=-1;
+var stuLoaded=false;
+
+function stuOnPageOpen(){
+  // 이미 데이터 있으면 그냥 표시
+  if(stuLoaded&&stuAllData.length){renderStudents();return;}
+  // 초기 화면 복원
+  document.getElementById('stu-content').innerHTML=
+    '<div class="stu-state" id="stu-init-wrap">'
+    +'<i class="ti ti-table-import stu-state-icon"></i>'
+    +'<div class="stu-state-title">학생 명단 연동</div>'
+    +'<div class="stu-state-sub">Google 계정으로 로그인하면<br><b>\''+escHtml(STU_FILE_NAME)+'\'</b> 파일의 '+escHtml(STU_SHEET_NAME)+' 시트를<br>자동으로 불러옵니다.</div>'
+    +'<button class="stu-google-btn" onclick="stuLogin()"><i class="ti ti-brand-google"></i>Google로 연동하기</button>'
+    +'</div>';
+}
+
+function stuLogin(){
+  if(!IS_CONFIGURED){alert('GOOGLE_CLIENT_ID를 먼저 설정해 주세요.');return;}
+  google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:SHEETS_SCOPE,
+    callback:function(resp){
+      if(resp.error){stuShowError('인증 실패: '+resp.error);return;}
+      stuToken=resp.access_token;
+      stuFindFile();
+    }
+  }).requestAccessToken();
+}
+
+function stuRefresh(){
+  if(!stuToken){stuLogin();return;}
+  if(stuSpreadsheetId)stuLoadSheet();else stuFindFile();
+}
+
+function stuShowLoading(msg){
+  document.getElementById('stu-content').innerHTML=
+    '<div class="stu-loading"><div class="spinner"></div>'+(msg||'학생 정보를 불러오는 중…')+'</div>';
+}
+
+function stuShowError(msg){
+  document.getElementById('stu-content').innerHTML=
+    '<div class="stu-state"><i class="ti ti-alert-circle stu-state-icon" style="color:var(--danger)"></i>'
+    +'<div class="stu-state-title" style="color:var(--danger)">불러오기 실패</div>'
+    +'<div class="stu-state-sub">'+escHtml(msg)+'</div>'
+    +'<button class="stu-google-btn" onclick="stuLogin()"><i class="ti ti-refresh"></i>다시 시도</button></div>';
+}
+
+function stuFindFile(){
+  stuShowLoading("'"+STU_FILE_NAME+"' 파일 검색 중…");
+  var q=encodeURIComponent("name='"+STU_FILE_NAME+"' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false");
+  fetch('https://www.googleapis.com/drive/v3/files?q='+q+'&spaces=drive&fields=files(id,name)',
+    {headers:{Authorization:'Bearer '+stuToken}})
+  .then(function(r){if(!r.ok)throw new Error('Drive API 오류 ('+r.status+')');return r.json();})
+  .then(function(data){
+    if(!data.files||!data.files.length)
+      throw new Error("'"+STU_FILE_NAME+"' 파일을 찾을 수 없습니다.\n내 드라이브에 파일이 있는지 확인해 주세요.");
+    stuSpreadsheetId=data.files[0].id;
+    stuLoadSheet();
+  })
+  .catch(function(e){stuShowError(e.message);});
+}
+
+function stuLoadSheet(){
+  stuShowLoading("'"+STU_SHEET_NAME+"' 시트 불러오는 중…");
+  fetch('https://sheets.googleapis.com/v4/spreadsheets/'+stuSpreadsheetId+'/values/'+encodeURIComponent(STU_SHEET_NAME),
+    {headers:{Authorization:'Bearer '+stuToken}})
+  .then(function(r){if(!r.ok)throw new Error('Sheets API 오류 ('+r.status+')');return r.json();})
+  .then(function(data){
+    if(!data.values||data.values.length<2)
+      throw new Error("'"+STU_SHEET_NAME+"' 시트에 데이터가 없습니다.");
+    stuHeaders=data.values[0];
+    stuAllData=data.values.slice(1).map(function(row,i){
+      var obj={_ri:i};
+      stuHeaders.forEach(function(h,ci){obj[h]=row[ci]!==undefined?String(row[ci]):'';});
+      return obj;
+    });
+    stuQuery='';stuGenderFilter='all';stuSelectedIdx=-1;stuLoaded=true;
+    document.getElementById('stu-refresh-btn').style.display='flex';
+    renderStudents();
+  })
+  .catch(function(e){stuShowError(e.message);});
+}
+
+/* ── 헤더 키 탐색 ── */
+function stuKey(candidates){
+  for(var i=0;i<stuHeaders.length;i++)
+    for(var j=0;j<candidates.length;j++)
+      if(stuHeaders[i]===candidates[j]||stuHeaders[i].indexOf(candidates[j])===0)return stuHeaders[i];
+  return null;
+}
+function stuNameKey(){return stuKey(['이름','성명','Name','name'])||stuHeaders[1]||stuHeaders[0];}
+function stuNumKey(){return stuKey(['번호','번','학번','No','no','출석']);}
+function stuGenderKey(){return stuKey(['성별','성','Gender','gender','구분']);}
+
+/* ── 성별 정규화 ── */
+function stuNormGender(v){
+  v=(v||'').trim();
+  if(v==='남'||v==='남자'||v==='M'||v==='m')return 'm';
+  if(v==='여'||v==='여자'||v==='F'||v==='f')return 'f';
+  return '';
+}
+
+function renderStudents(){
+  var gKey=stuGenderKey(),nameKey=stuNameKey(),numKey=stuNumKey();
+
+  /* 필터 */
+  var filtered=stuAllData.filter(function(s){
+    if(stuQuery){
+      var q=stuQuery.toLowerCase();
+      if(!stuHeaders.some(function(h){return (s[h]||'').toLowerCase().indexOf(q)>=0;}))return false;
+    }
+    if(stuGenderFilter!=='all'&&gKey){
+      var g=stuNormGender(s[gKey]);
+      if(stuGenderFilter==='m'&&g!=='m')return false;
+      if(stuGenderFilter==='f'&&g!=='f')return false;
+    }
+    return true;
+  });
+
+  /* 통계 */
+  var tm=0,tf=0;
+  if(gKey)stuAllData.forEach(function(s){var g=stuNormGender(s[gKey]);if(g==='m')tm++;else if(g==='f')tf++;});
+
+  var html='';
+
+  /* stats bar */
+  html+='<div class="stu-stats-bar">';
+  html+='<span class="stu-stat"><i class="ti ti-users" style="font-size:12px"></i>전체&nbsp;<b>'+stuAllData.length+'</b>명</span>';
+  if(gKey){
+    html+='<span class="stu-stat male"><i class="ti ti-gender-male" style="font-size:13px;color:#3B82F6"></i>남&nbsp;<b>'+tm+'</b>명</span>';
+    html+='<span class="stu-stat female"><i class="ti ti-gender-female" style="font-size:13px;color:#EC4899"></i>여&nbsp;<b>'+tf+'</b>명</span>';
+  }
+  html+='</div>';
+
+  /* toolbar */
+  html+='<div class="stu-toolbar">';
+  html+='<div class="stu-search"><i class="ti ti-search"></i>'
+    +'<input id="stu-s-inp" type="text" placeholder="이름, 연락처 등 검색…" value="'+escHtml(stuQuery)+'"'
+    +' oninput="stuFilter(this.value)" onkeydown="if(event.key===\'Escape\'){this.value=\'\';stuFilter(\'\');}"></div>';
+  if(gKey){
+    html+='<div class="stu-filter-btns">';
+    html+='<button class="stu-filter-btn'+(stuGenderFilter==='all'?' ac':'')+'" onclick="stuSetGender(\'all\')">전체</button>';
+    html+='<button class="stu-filter-btn'+(stuGenderFilter==='m'?' ac-m':'')+'" onclick="stuSetGender(\'m\')" style="color:'+(stuGenderFilter==='m'?'#fff':'#3B82F6')+';border-color:#93C5FD">남</button>';
+    html+='<button class="stu-filter-btn'+(stuGenderFilter==='f'?' ac-f':'')+'" onclick="stuSetGender(\'f\')" style="color:'+(stuGenderFilter==='f'?'#fff':'#EC4899')+';border-color:#F9A8D4">여</button>';
+    html+='</div>';
+  }
+  html+='<span style="margin-left:auto;font-size:12px;color:var(--t4)">'+filtered.length+'명</span>';
+  html+='</div>';
+
+  /* table */
+  html+='<div class="stu-body"><div class="stu-table-wrap"><table class="stu-table">';
+  html+='<thead><tr>';
+  stuHeaders.forEach(function(h){html+='<th>'+escHtml(h)+'</th>';});
+  html+='</tr></thead><tbody>';
+
+  if(!filtered.length){
+    html+='<tr><td colspan="'+stuHeaders.length+'" style="text-align:center;padding:36px;color:var(--t4)">검색 결과가 없습니다.</td></tr>';
+  }else{
+    filtered.forEach(function(s){
+      var isSel=stuSelectedIdx===s._ri;
+      html+='<tr class="stu-row'+(isSel?' sel':'')+'" onclick="showStudentDetail('+s._ri+')">';
+      stuHeaders.forEach(function(h){
+        var v=s[h]||'';
+        var cls='';
+        if(h===numKey)cls=' class="stu-num"';
+        else if(h===nameKey)cls=' class="stu-name"';
+        var cell;
+        if(h===gKey){
+          var g=stuNormGender(v);
+          if(g==='m')cell='<span class="stu-tag-m">남</span>';
+          else if(g==='f')cell='<span class="stu-tag-f">여</span>';
+          else cell=escHtml(v);
+        }else{cell=escHtml(v);}
+        html+='<td'+cls+' title="'+escHtml(v)+'">'+cell+'</td>';
+      });
+      html+='</tr>';
+    });
+  }
+  html+='</tbody></table></div></div>';
+
+  document.getElementById('stu-content').innerHTML=html;
+  // 검색창 포커스 유지
+  if(stuQuery){var inp=document.getElementById('stu-s-inp');if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}}
+}
+
+function stuFilter(q){stuQuery=q.trim();renderStudents();}
+function stuSetGender(g){stuGenderFilter=g;renderStudents();}
+
+function showStudentDetail(ri){
+  stuSelectedIdx=ri;
+  var s=stuAllData[ri];if(!s)return;
+  var nameKey=stuNameKey(),numKey=stuNumKey(),gKey=stuGenderKey();
+  var name=s[nameKey]||'?';
+  var num=numKey?s[numKey]+'번':'';
+  var gender=gKey?stuNormGender(s[gKey]):'';
+
+  var av=document.getElementById('stu-d-avatar');
+  av.textContent=name.length>1?name[1]:name[0];
+  if(gender==='m'){av.style.cssText='background:#EFF6FF;color:#3B82F6;border-color:#3B82F6';}
+  else if(gender==='f'){av.style.cssText='background:#FDF2F8;color:#EC4899;border-color:#EC4899';}
+  else{av.style.cssText='';}
+
+  document.getElementById('stu-d-name').textContent=name;
+  document.getElementById('stu-d-meta').textContent=num+(gender==='m'?' · 남':gender==='f'?' · 여':'');
+
+  var bodyHtml='';
+  stuHeaders.forEach(function(h){
+    var v=s[h]||'';
+    var valHtml;
+    if(h===gKey){
+      var g=stuNormGender(v);
+      valHtml=g==='m'?'<span class="stu-tag-m">남</span>':g==='f'?'<span class="stu-tag-f">여</span>':escHtml(v);
+    }else{valHtml='<div class="stu-field-val">'+escHtml(v)+'</div>';}
+    bodyHtml+='<div class="stu-field"><div class="stu-field-label">'+escHtml(h)+'</div>'+valHtml+'</div>';
+  });
+  document.getElementById('stu-d-body').innerHTML=bodyHtml;
+  document.getElementById('stu-detail').classList.add('open');
+  renderStudents();
+}
+
+function closeStudentDetail(){
+  stuSelectedIdx=-1;
+  document.getElementById('stu-detail').classList.remove('open');
+  renderStudents();
+}
+
+/* 패널 바깥 클릭 시 닫기 */
+document.addEventListener('click',function(e){
+  var panel=document.getElementById('stu-detail');
+  if(panel&&panel.classList.contains('open')&&!panel.contains(e.target)){
+    var row=e.target.closest('.stu-row');
+    if(!row)closeStudentDetail();
+  }
 });
 
 /* ══ 반응형: 모바일 탭 ══ */
