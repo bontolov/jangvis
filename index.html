@@ -556,6 +556,45 @@ body{
   .stu-tbl-th:nth-child(6),.stu-td:nth-child(6){display:none}
 }
 
+/* ══ 생활지도 페이지 ══ */
+#page-conduct,#page-grades{display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;background:var(--bg)}
+.gs-page-hdr{display:flex;align-items:center;gap:10px;padding:14px 20px 10px;border-bottom:0.5px solid var(--bd);background:var(--surf);flex-shrink:0}
+.gs-page-hdr i{font-size:17px;color:var(--t3)}
+.gs-page-title{font-size:16px;font-weight:700;color:var(--t1);flex:1}
+.gs-toolbar{display:flex;align-items:center;gap:8px;padding:10px 20px;background:var(--surf);border-bottom:0.5px solid var(--bd);flex-wrap:wrap;flex-shrink:0}
+.gs-search{display:flex;align-items:center;gap:6px;background:var(--item);border:0.5px solid var(--bd2);border-radius:8px;padding:6px 10px;flex:1;min-width:140px;max-width:240px}
+.gs-search input{border:none;background:transparent;outline:none;font-size:13px;color:var(--t1);font-family:inherit;width:100%}
+.gs-search i{font-size:14px;color:var(--t4)}
+.gs-chips{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.gs-chip{padding:4px 11px;border-radius:20px;font-size:12px;font-weight:500;border:0.5px solid var(--bd2);background:var(--item);color:var(--t2);cursor:pointer;white-space:nowrap;transition:all .12s}
+.gs-chip.ac{background:var(--ac);color:#fff;border-color:transparent}
+.gs-view-list{flex:1;overflow-y:auto;padding:0 20px 20px;min-height:0}
+.gs-tbl-wrap{overflow-x:auto;border:0.5px solid var(--bd2);border-radius:12px;margin-top:12px}
+.gs-tbl{width:100%;border-collapse:collapse;background:var(--card)}
+.gs-tbl-th{padding:9px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--t3);background:var(--item);cursor:pointer;position:sticky;top:0;z-index:2;white-space:nowrap;user-select:none;border-bottom:0.5px solid var(--bd2)}
+.gs-tbl-th:hover{background:var(--bd2)}
+.gs-tbl-th.sorted{color:var(--ac)}
+.gs-tr{cursor:default;border-bottom:0.5px solid var(--bd2);transition:background .1s}
+.gs-tr:hover{background:var(--item)}
+.gs-td{padding:9px 12px;font-size:12px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.gs-td.num-hi{background:rgba(34,197,94,.12);color:#16a34a;font-weight:600;text-align:center}
+.gs-td.num-mid{background:rgba(251,146,60,.12);color:#ea580c;font-weight:600;text-align:center}
+.gs-td.num-lo{background:rgba(239,68,68,.12);color:#dc2626;font-weight:600;text-align:center}
+.gs-td.num-plain{text-align:center;color:var(--t2)}
+.gs-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:60px 20px;color:var(--t4)}
+.gs-empty i{font-size:32px}
+.gs-loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:60px 20px;color:var(--t3);font-size:14px}
+.gs-err{color:var(--t3);font-size:13px;padding:40px 20px;text-align:center}
+.gs-stat-bar{display:flex;align-items:center;gap:16px;padding:8px 20px;background:var(--surf);border-bottom:0.5px solid var(--bd);flex-shrink:0}
+.gs-stat{font-size:12px;color:var(--t3)}
+.gs-stat b{color:var(--t1);font-weight:600}
+/* grades: 성명 고정 열 */
+.gs-tbl th.gs-name-col,td.gs-name-col{position:sticky;left:0;z-index:1;background:var(--card)}
+.gs-tbl th.gs-name-col{z-index:3;background:var(--item)}
+@media(max-width:768px){
+  .gs-toolbar{padding:8px 12px}
+  .gs-view-list{padding:0 12px 76px}
+}
 /* ══ 하단 모바일 내비게이션 ══ */
 .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--surf);border-top:0.5px solid var(--bd);z-index:200;align-items:stretch}
 .mobile-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--t4);font-size:10px;font-weight:500;transition:color .12s;-webkit-tap-highlight-color:transparent;user-select:none;padding:6px 0}
@@ -665,9 +704,9 @@ body{
     <div class="ws-item" onclick="showPage('workspace')"><i class="ti ti-layout-dashboard"></i><span class="ws-label">워크스페이스</span></div>
     <div class="sec-label">업무</div>
     <div class="nav-item" id="nav-students" onclick="showPage('students')"><i class="ti ti-users"></i><span class="nav-label">학생 관리</span></div>
-    <div class="nav-item" onclick="showPage('workspace')"><i class="ti ti-shield-check"></i><span class="nav-label">생활지도</span></div>
+    <div class="nav-item" id="nav-conduct" onclick="showPage('conduct')"><i class="ti ti-shield-check"></i><span class="nav-label">생활지도</span></div>
     <div class="nav-item" onclick="showPage('workspace')"><i class="ti ti-message-circle"></i><span class="nav-label">상담 기록</span></div>
-    <div class="nav-item" onclick="showPage('workspace')"><i class="ti ti-chart-bar"></i><span class="nav-label">성적 관리</span></div>
+    <div class="nav-item" id="nav-grades" onclick="showPage('grades')"><i class="ti ti-chart-bar"></i><span class="nav-label">성적 관리</span></div>
     <div class="sec-label">수업</div>
     <div class="nav-item" onclick="showPage('workspace')"><i class="ti ti-school"></i><span class="nav-label">수업 계획</span></div>
     <div class="nav-item" onclick="showPage('workspace')"><i class="ti ti-book"></i><span class="nav-label">독서기록</span></div>
@@ -841,6 +880,34 @@ body{
     <div class="stu-detail-close" onclick="closeStudentDetail()"><i class="ti ti-x"></i></div>
   </div>
   <div class="stu-detail-body" id="stu-d-body"></div>
+</div>
+
+<!-- ════ 생활지도 페이지 ════ -->
+<div id="page-conduct">
+  <div class="gs-page-hdr">
+    <i class="ti ti-shield-check"></i>
+    <span class="gs-page-title">생활지도</span>
+  </div>
+  <div class="gs-toolbar" id="cond-toolbar">
+    <div class="gs-search"><i class="ti ti-search"></i><input id="cond-q" placeholder="검색..."></div>
+    <div class="gs-chips" id="cond-chips"></div>
+  </div>
+  <div class="gs-stat-bar"><span class="gs-stat" id="cond-stat"></span></div>
+  <div class="gs-view-list" id="cond-list"><div class="gs-loading"><i class="ti ti-loader-2"></i>불러오는 중…</div></div>
+</div>
+
+<!-- ════ 성적관리 페이지 ════ -->
+<div id="page-grades">
+  <div class="gs-page-hdr">
+    <i class="ti ti-chart-bar"></i>
+    <span class="gs-page-title">성적 관리</span>
+  </div>
+  <div class="gs-toolbar" id="grade-toolbar">
+    <div class="gs-search"><i class="ti ti-search"></i><input id="grade-q" placeholder="학생 이름 검색..."></div>
+    <div class="gs-chips" id="grade-chips"></div>
+  </div>
+  <div class="gs-stat-bar"><span class="gs-stat" id="grade-stat"></span></div>
+  <div class="gs-view-list" id="grade-list"><div class="gs-loading"><i class="ti ti-loader-2"></i>불러오는 중…</div></div>
 </div>
 
 <!-- ════ 일정관리 페이지 ════ -->
@@ -1020,14 +1087,22 @@ function showPage(page){
   var ws=document.getElementById('page-workspace');
   var cal=document.getElementById('page-calendar');
   var stu=document.getElementById('page-students');
+  var cond=document.getElementById('page-conduct');
+  var grd=document.getElementById('page-grades');
   var navCal=document.getElementById('nav-calendar');
   var navStu=document.getElementById('nav-students');
+  var navCond=document.getElementById('nav-conduct');
+  var navGrd=document.getElementById('nav-grades');
   // 모두 숨김
   ws.style.display='none';
   cal.style.display='none';
   if(stu)stu.style.display='none';
+  if(cond)cond.style.display='none';
+  if(grd)grd.style.display='none';
   navCal.classList.remove('active');
   if(navStu)navStu.classList.remove('active');
+  if(navCond)navCond.classList.remove('active');
+  if(navGrd)navGrd.classList.remove('active');
   if(page==='calendar'){
     cal.style.display='flex';
     navCal.classList.add('active');renderCalPage();
@@ -1035,6 +1110,14 @@ function showPage(page){
     if(stu){stu.style.display='flex';}
     if(navStu)navStu.classList.add('active');
     stuOnPageOpen();
+  } else if(page==='conduct'){
+    if(cond){cond.style.display='flex';}
+    if(navCond)navCond.classList.add('active');
+    condOnPageOpen();
+  } else if(page==='grades'){
+    if(grd){grd.style.display='flex';}
+    if(navGrd)navGrd.classList.add('active');
+    gradeOnPageOpen();
   } else {
     ws.style.display='flex';
   }
@@ -2775,6 +2858,280 @@ document.addEventListener('click',function(e){
     closeStudentDetail();
 });
 
+/* ══════════════════════════════════════════════════════════════
+   생활지도 페이지 (Google Sheets 연동)
+══════════════════════════════════════════════════════════════ */
+var condAllData=[];
+var condHeaders=[];
+var condSortCol='';
+var condSortDir=1;
+var condCatCol=-1;   // 카테고리/유형 열 인덱스
+var condFilterCat='all';
+var condLoaded=false;
+
+var COND_SHEET_NAME='생활지도';
+
+function condOnPageOpen(){
+  if(!stuSpreadsheetId){
+    document.getElementById('cond-list').innerHTML='<div class="gs-err"><i class="ti ti-table-off" style="font-size:28px;display:block;margin:0 auto 8px"></i>먼저 학생 관리 탭에서 스프레드시트를 연결하세요.</div>';
+    return;
+  }
+  if(condLoaded&&condAllData.length>0){condRenderShell();return;}
+  condFetch();
+}
+
+function condFetch(){
+  document.getElementById('cond-list').innerHTML='<div class="gs-loading"><i class="ti ti-loader-2"></i>생활지도 데이터 불러오는 중…</div>';
+  if(!stuToken){document.getElementById('cond-list').innerHTML='<div class="gs-err">인증 토큰이 없습니다. 학생 관리 탭에서 먼저 로그인하세요.</div>';return;}
+  var url='https://sheets.googleapis.com/v4/spreadsheets/'+stuSpreadsheetId+'/values/'+encodeURIComponent(COND_SHEET_NAME)+'?majorDimension=ROWS';
+  fetch(url,{headers:{Authorization:'Bearer '+stuToken}})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.error){document.getElementById('cond-list').innerHTML='<div class="gs-err">오류: '+escHtml(data.error.message)+'</div>';return;}
+      var rows=data.values||[];
+      if(rows.length<2){document.getElementById('cond-list').innerHTML='<div class="gs-empty"><i class="ti ti-database-off"></i><span>데이터가 없습니다.</span></div>';return;}
+      condHeaders=rows[0];
+      condAllData=rows.slice(1).map(function(r,i){
+        var obj={_ri:i};
+        condHeaders.forEach(function(h,j){obj[h]=r[j]||'';});
+        return obj;
+      });
+      // 카테고리 열 자동탐지: '유형','종류','카테고리','분류','사유' 중 하나
+      var catWords=['유형','종류','카테고리','분류','사유','구분','내용'];
+      condCatCol=-1;
+      for(var ci=0;ci<condHeaders.length;ci++){
+        for(var wi=0;wi<catWords.length;wi++){
+          if(condHeaders[ci].indexOf(catWords[wi])>=0){condCatCol=ci;break;}
+        }
+        if(condCatCol>=0)break;
+      }
+      condLoaded=true;
+      condRenderShell();
+    })
+    .catch(function(e){document.getElementById('cond-list').innerHTML='<div class="gs-err">네트워크 오류: '+escHtml(e.message)+'</div>';});
+}
+
+function condRenderShell(){
+  // 카테고리 칩 생성
+  var chips='<span class="gs-chip ac" data-cat="all" onclick="condSetCat(\'all\')">전체</span>';
+  if(condCatCol>=0){
+    var cats={};
+    condAllData.forEach(function(r){var v=(r[condHeaders[condCatCol]]||'').trim();if(v)cats[v]=true;});
+    Object.keys(cats).sort().forEach(function(c){
+      chips+='<span class="gs-chip" data-cat="'+escHtml(c)+'" onclick="condSetCat(\''+escHtml(c).replace(/'/g,"\\'")+'\')" >'+escHtml(c)+'</span>';
+    });
+  }
+  document.getElementById('cond-chips').innerHTML=chips;
+  var q=document.getElementById('cond-q');
+  if(q)q.addEventListener('input',function(){condUpdate();},false);
+  condUpdate();
+}
+
+function condSetCat(cat){
+  condFilterCat=cat;
+  document.querySelectorAll('#cond-chips .gs-chip').forEach(function(c){
+    c.classList.toggle('ac',c.dataset.cat===cat);
+  });
+  condUpdate();
+}
+
+function condSortBy(col){
+  if(condSortCol===col){condSortDir*=-1;}else{condSortCol=col;condSortDir=1;}
+  condUpdate();
+}
+
+function condUpdate(){
+  var q=(document.getElementById('cond-q')||{value:''}).value.toLowerCase();
+  var rows=condAllData.filter(function(r){
+    if(condFilterCat!=='all'&&condCatCol>=0&&(r[condHeaders[condCatCol]]||'').trim()!==condFilterCat)return false;
+    if(q){
+      var found=false;
+      condHeaders.forEach(function(h){if((r[h]||'').toLowerCase().indexOf(q)>=0)found=true;});
+      if(!found)return false;
+    }
+    return true;
+  });
+  if(condSortCol){
+    rows=rows.slice().sort(function(a,b){
+      var av=(a[condSortCol]||'').toString();var bv=(b[condSortCol]||'').toString();
+      var an=parseFloat(av);var bn=parseFloat(bv);
+      var cmp=(!isNaN(an)&&!isNaN(bn))?(an-bn):av.localeCompare(bv,'ko');
+      return cmp*condSortDir;
+    });
+  }
+  document.getElementById('cond-stat').innerHTML='<b>'+rows.length+'</b>건'+
+    (condFilterCat!=='all'?' &nbsp;·&nbsp; <b>'+escHtml(condFilterCat)+'</b>':'');
+  if(!rows.length){
+    document.getElementById('cond-list').innerHTML='<div class="gs-empty"><i class="ti ti-search-off"></i><span>검색 결과가 없습니다.</span></div>';
+    return;
+  }
+  var sortIc=function(col){return condSortCol===col?(condSortDir===1?' ▲':' ▼'):'';};
+  var thead='<thead><tr>'+condHeaders.map(function(h,i){
+    return '<th class="gs-tbl-th'+(condSortCol===h?' sorted':'')+'" onclick="condSortBy(\''+escHtml(h)+'\')" >'+escHtml(h)+'<span class="sort-ic">'+sortIc(h)+'</span></th>';
+  }).join('')+'</tr></thead>';
+  var tbody='<tbody>'+rows.map(function(r){
+    return '<tr class="gs-tr">'+condHeaders.map(function(h){
+      return '<td class="gs-td" title="'+escHtml(r[h]||'')+'">'+escHtml(r[h]||'')+'</td>';
+    }).join('')+'</tr>';
+  }).join('')+'</tbody>';
+  document.getElementById('cond-list').innerHTML='<div class="gs-tbl-wrap"><table class="gs-tbl">'+thead+tbody+'</table></div>';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   성적관리 페이지 (Google Sheets 연동)
+══════════════════════════════════════════════════════════════ */
+var gradeAllData=[];
+var gradeHeaders=[];
+var gradeNameCol=0;   // 이름/학번 열 인덱스
+var gradeNumCols=[];  // 숫자형(점수) 열 인덱스 목록
+var gradeSortCol='';
+var gradeSortDir=1;
+var gradeSubjectFilter='all';
+var gradeLoaded=false;
+
+var GRADE_SHEET_NAME='성적';
+
+function gradeOnPageOpen(){
+  if(!stuSpreadsheetId){
+    document.getElementById('grade-list').innerHTML='<div class="gs-err"><i class="ti ti-table-off" style="font-size:28px;display:block;margin:0 auto 8px"></i>먼저 학생 관리 탭에서 스프레드시트를 연결하세요.</div>';
+    return;
+  }
+  if(gradeLoaded&&gradeAllData.length>0){gradeRenderShell();return;}
+  gradeFetch();
+}
+
+function gradeFetch(){
+  document.getElementById('grade-list').innerHTML='<div class="gs-loading"><i class="ti ti-loader-2"></i>성적 데이터 불러오는 중…</div>';
+  if(!stuToken){document.getElementById('grade-list').innerHTML='<div class="gs-err">인증 토큰이 없습니다. 학생 관리 탭에서 먼저 로그인하세요.</div>';return;}
+  var url='https://sheets.googleapis.com/v4/spreadsheets/'+stuSpreadsheetId+'/values/'+encodeURIComponent(GRADE_SHEET_NAME)+'?majorDimension=ROWS';
+  fetch(url,{headers:{Authorization:'Bearer '+stuToken}})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.error){document.getElementById('grade-list').innerHTML='<div class="gs-err">오류: '+escHtml(data.error.message)+'</div>';return;}
+      var rows=data.values||[];
+      if(rows.length<2){document.getElementById('grade-list').innerHTML='<div class="gs-empty"><i class="ti ti-database-off"></i><span>데이터가 없습니다.</span></div>';return;}
+      gradeHeaders=rows[0];
+      // 이름 열 자동탐지
+      gradeNameCol=0;
+      var nameWords=['이름','성명','학생','name'];
+      for(var ci=0;ci<gradeHeaders.length;ci++){
+        for(var wi=0;wi<nameWords.length;wi++){
+          if(gradeHeaders[ci].toLowerCase().indexOf(nameWords[wi])>=0){gradeNameCol=ci;break;}
+        }
+        if(gradeNameCol!==0)break;
+      }
+      gradeAllData=rows.slice(1).map(function(r,i){
+        var obj={_ri:i};
+        gradeHeaders.forEach(function(h,j){obj[h]=r[j]||'';});
+        return obj;
+      });
+      // 숫자 열 감지: 첫 5개 데이터행 기준
+      gradeNumCols=[];
+      var sample=gradeAllData.slice(0,5);
+      gradeHeaders.forEach(function(h,j){
+        if(j===gradeNameCol)return;
+        var numCount=0;
+        sample.forEach(function(r){var v=r[h];if(v&&!isNaN(parseFloat(v)))numCount++;});
+        if(numCount>=Math.min(2,sample.length))gradeNumCols.push(j);
+      });
+      gradeLoaded=true;
+      gradeRenderShell();
+    })
+    .catch(function(e){document.getElementById('grade-list').innerHTML='<div class="gs-err">네트워크 오류: '+escHtml(e.message)+'</div>';});
+}
+
+function gradeRenderShell(){
+  // 과목 필터 칩 (숫자열 = 과목)
+  var chips='<span class="gs-chip ac" data-sub="all" onclick="gradeSetSub(\'all\')">전체</span>';
+  gradeNumCols.forEach(function(j){
+    var h=gradeHeaders[j];
+    chips+='<span class="gs-chip" data-sub="'+escHtml(h)+'" onclick="gradeSetSub(\''+escHtml(h).replace(/'/g,"\\'")+'\')" >'+escHtml(h)+'</span>';
+  });
+  document.getElementById('grade-chips').innerHTML=chips;
+  var q=document.getElementById('grade-q');
+  if(q)q.addEventListener('input',function(){gradeUpdate();},false);
+  gradeUpdate();
+}
+
+function gradeSetSub(sub){
+  gradeSubjectFilter=sub;
+  document.querySelectorAll('#grade-chips .gs-chip').forEach(function(c){
+    c.classList.toggle('ac',c.dataset.sub===sub);
+  });
+  gradeUpdate();
+}
+
+function gradeSortBy(col){
+  if(gradeSortCol===col){gradeSortDir*=-1;}else{gradeSortCol=col;gradeSortDir=1;}
+  gradeUpdate();
+}
+
+function gradeScoreClass(val){
+  var n=parseFloat(val);
+  if(isNaN(n))return'gs-td';
+  if(n>=90)return'gs-td num-hi';
+  if(n>=70)return'gs-td num-mid';
+  return'gs-td num-lo';
+}
+
+function gradeUpdate(){
+  var q=(document.getElementById('grade-q')||{value:''}).value.toLowerCase();
+  // 표시할 열 결정
+  var showCols;
+  if(gradeSubjectFilter==='all'){
+    showCols=gradeHeaders.map(function(_,i){return i;});
+  } else {
+    // 이름 + 숫자 고정열 + 선택 과목열
+    showCols=[gradeNameCol];
+    // 학번 같은 비숫자 열도 포함 (앞쪽 3열까지)
+    for(var ci=0;ci<Math.min(3,gradeHeaders.length);ci++){
+      if(ci!==gradeNameCol&&gradeNumCols.indexOf(ci)<0)showCols.push(ci);
+    }
+    gradeNumCols.forEach(function(j){
+      if(gradeHeaders[j]===gradeSubjectFilter)showCols.push(j);
+    });
+    // 중복 제거 + 순서 유지
+    showCols=gradeHeaders.map(function(_,i){return i;}).filter(function(i){return showCols.indexOf(i)>=0;});
+  }
+  var rows=gradeAllData.filter(function(r){
+    if(!q)return true;
+    var found=false;
+    gradeHeaders.forEach(function(h){if((r[h]||'').toLowerCase().indexOf(q)>=0)found=true;});
+    return found;
+  });
+  if(gradeSortCol){
+    rows=rows.slice().sort(function(a,b){
+      var av=(a[gradeSortCol]||'').toString();var bv=(b[gradeSortCol]||'').toString();
+      var an=parseFloat(av);var bn=parseFloat(bv);
+      var cmp=(!isNaN(an)&&!isNaN(bn))?(an-bn):av.localeCompare(bv,'ko');
+      return cmp*gradeSortDir;
+    });
+  }
+  document.getElementById('grade-stat').innerHTML='<b>'+rows.length+'</b>명'+
+    (gradeSubjectFilter!=='all'?' &nbsp;·&nbsp; <b>'+escHtml(gradeSubjectFilter)+'</b> 과목':'');
+  if(!rows.length){
+    document.getElementById('grade-list').innerHTML='<div class="gs-empty"><i class="ti ti-search-off"></i><span>검색 결과가 없습니다.</span></div>';
+    return;
+  }
+  var sortIc=function(col){return gradeSortCol===col?(gradeSortDir===1?' ▲':' ▼'):'';};
+  var thead='<thead><tr>'+showCols.map(function(j){
+    var h=gradeHeaders[j];
+    var isName=(j===gradeNameCol);
+    return '<th class="gs-tbl-th'+(isName?' gs-name-col':'')+(gradeSortCol===h?' sorted':'')+'" onclick="gradeSortBy(\''+escHtml(h)+'\')" >'+escHtml(h)+'<span class="sort-ic">'+sortIc(h)+'</span></th>';
+  }).join('')+'</tr></thead>';
+  var tbody='<tbody>'+rows.map(function(r){
+    return '<tr class="gs-tr">'+showCols.map(function(j){
+      var h=gradeHeaders[j];
+      var v=r[h]||'';
+      var isNum=gradeNumCols.indexOf(j)>=0;
+      var isName=(j===gradeNameCol);
+      var cls=isName?'gs-td gs-name-col':isNum?gradeScoreClass(v):'gs-td';
+      return '<td class="'+cls+'" title="'+escHtml(v)+'">'+escHtml(v)+'</td>';
+    }).join('')+'</tr>';
+  }).join('')+'</tbody>';
+  document.getElementById('grade-list').innerHTML='<div class="gs-tbl-wrap"><table class="gs-tbl">'+thead+tbody+'</table></div>';
+}
+
 /* ══ 반응형: 모바일 탭 ══ */
 var mobileTab='home';
 function showMobileTab(tab){
@@ -2840,7 +3197,8 @@ if(document.readyState==='complete'||document.readyState==='interactive'){applyM
   </div>
   <div class="mobile-nav-item" data-tab="calendar" onclick="showMobileTab('calendar')">
     <i class="ti ti-calendar"></i><span>달력</span>
-  </div></nav>
+  </div>
+</nav>
 
 </body>
 </html>
