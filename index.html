@@ -755,6 +755,9 @@ body{
         <div class="icon-btn" onclick="toggleTheme()" title="라이트/다크 (F: 사이드바)">
           <i class="ti ti-moon" id="theme-icon"></i>
         </div>
+        <div id="sync-cloud-btn" onclick="gSyncManual()" title="Google Drive에서 데이터 동기화">
+          <i class="ti ti-cloud-download" style="font-size:13px"></i>동기화
+        </div>
         <div id="drive-sync-status" title="Google Drive 동기화 상태" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t4);opacity:0;transition:opacity .4s;cursor:default;white-space:nowrap">
           <i class="ti ti-cloud-check" style="font-size:13px"></i><span id="drive-sync-text"></span>
         </div>
@@ -2390,6 +2393,7 @@ function stuRenderShell(){
     +genderBtns
     +'<div class="stu-vbtn-wrap">'
     +'<button class="stu-vb active" id="svb-list" onclick="stuToggleView(\'list\')"><i class="ti ti-table"></i>목록</button>'
+    +(_skeys.photo?'<button class=\"stu-vb\" id=\"svb-cards\" onclick=\"stuToggleView(\'cards\')\" ><i class=\"ti ti-id\" ></i>포토</button>':'')
     +'<button class="stu-vb" id="svb-map" onclick="stuToggleView(\'map\')"><i class="ti ti-map-pin"></i>지도</button>'
     +'</div>'
     +'<button class="stu-add-btn" onclick="stuShowAddModal()"><i class="ti ti-user-plus" style="font-size:14px"></i>학생 추가</button>'
@@ -2403,6 +2407,7 @@ function stuRenderShell(){
     +'<div class="stu-count-row" id="stu-count-row"></div>'
     +'<div class="stu-tbl-wrap"><table class="stu-tbl" id="stu-tbl"></table></div>'
     +'</div>'
+    +'<div id="stu-view-cards" style="flex:1;overflow-y:auto;padding:12px 20px 20px;min-height:0;display:none"><div class="stu-photo-grid" id="stu-card-grid"></div></div>'
     +'<div id="stu-view-map" style="flex:1;display:none;flex-direction:column;min-height:0;position:relative">'
     +'<div id="stu-map-el" style="flex:1"></div>'
     +'<div class="stu-map-legend" id="stu-map-legend" style="display:none"></div>'
@@ -2523,6 +2528,10 @@ function stuUpdateTable(){
     var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
     var avColor=gender==='m'?'#3B82F6':gender==='f'?'#EC4899':'var(--t3)';
     var avChar=name.length>1?name[1]:name[0];
+    var photoSrcTbl=_skeys.photo?stuPhotoUrl(s[_skeys.photo]):null;
+    var avHtml=photoSrcTbl
+      ?'<img src="'+photoSrcTbl+'" class="stu-td-av" style="object-fit:cover;object-position:center top" onerror="this.outerHTML=\'<span class=\"stu-td-av\" style=\"background:'+avBg+';color:'+avColor+'\">'+avChar+'</span>\'">'
+      :'<span class="stu-td-av" style="background:'+avBg+';color:'+avColor+'">'+avChar+'</span>';
 
     var gTag=gender==='m'?'<span class="stu-tag-m">남</span>':gender==='f'?'<span class="stu-tag-f">여</span>':'';
     var healthBadge=health?'<span class="stu-health-badge" title="'+escHtml(health)+'">'+escHtml(health)+'</span>':'<span style="color:var(--t4)">—</span>';
@@ -2532,7 +2541,7 @@ function stuUpdateTable(){
       +'<td class="stu-td" style="color:var(--t4);font-size:11px">'+escHtml(num)+'</td>'
       +'<td class="stu-td">'
         +'<div class="stu-td-name">'
-          +'<span class="stu-td-av" style="background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</span>'
+          +avHtml
           +'<span style="font-weight:600">'+escHtml(name)+'</span>'
         +'</div>'
       +'</td>'
@@ -2562,15 +2571,23 @@ function stuSetClass(cls){
 function stuToggleView(mode){
   stuViewMode=mode;
   var lv=document.getElementById('stu-view-list');
+  var cv=document.getElementById('stu-view-cards');
   var mv=document.getElementById('stu-view-map');
   var vbl=document.getElementById('svb-list');
+  var vbc=document.getElementById('svb-cards');
   var vbm=document.getElementById('svb-map');
+  [vbl,vbc,vbm].forEach(function(b){if(b)b.className='stu-vb';});
+  if(lv)lv.style.display='none';if(cv)cv.style.display='none';if(mv)mv.style.display='none';
   if(mode==='list'){
-    if(lv)lv.style.display='';if(mv)mv.style.display='none';
-    if(vbl)vbl.className='stu-vb active';if(vbm)vbm.className='stu-vb';
+    if(lv)lv.style.display='';
+    if(vbl)vbl.className='stu-vb active';
+  }else if(mode==='cards'){
+    if(cv)cv.style.display='';
+    if(vbc)vbc.className='stu-vb active';
+    stuUpdateCards();
   }else{
-    if(lv)lv.style.display='none';if(mv){mv.style.display='flex';mv.style.flexDirection='column';}
-    if(vbl)vbl.className='stu-vb';if(vbm)vbm.className='stu-vb active';
+    if(mv){mv.style.display='flex';mv.style.flexDirection='column';}
+    if(vbm)vbm.className='stu-vb active';
     stuInitMap();
   }
 }
@@ -2795,6 +2812,47 @@ function stuDeleteStudent(ri){
   stuUpdateTable();
 }
 
+function stuUpdateCards(){
+  var grid=document.getElementById('stu-card-grid');
+  if(!grid)return;
+  var q=stuQuery.toLowerCase();
+  var rows=stuAllData.concat(stuLocalAdded).filter(function(s){
+    if(stuLocalDeleted[s._ri])return false;
+    if(stuGenderFilter!=='all'&&_skeys.gender){var g=stuNormGender(s[_skeys.gender]);if(g!==stuGenderFilter)return false;}
+    if(stuClassFilter!=='all'&&stuGetClass(s)!==stuClassFilter)return false;
+    if(q){
+      var matched=false;
+      if(_skeys.name&&(s[_skeys.name]||'').toLowerCase().indexOf(q)>=0)matched=true;
+      if(_skeys.num&&(s[_skeys.num]||'').toLowerCase().indexOf(q)>=0)matched=true;
+      if(!matched)return false;
+    }
+    return true;
+  });
+  grid.innerHTML=rows.map(function(s){
+    var name=s[_skeys.name]||'?';
+    var gender=_skeys.gender?stuNormGender(s[_skeys.gender]):'';
+    var cls=stuGetClass(s);
+    var clsColor=stuClassColor(cls);
+    var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
+    var avColor=gender==='m'?'#3B82F6':gender==='f'?'#EC4899':'var(--t3)';
+    var avChar=name.length>1?name[1]:name[0];
+    var photoSrc=_skeys.photo?stuPhotoUrl(s[_skeys.photo]):null;
+    var isSel=stuSelectedIdx===s._ri;
+    var imgHtml=photoSrc
+      ?'<img class="stu-pcard-img" src="'+photoSrc+'" loading="lazy" onerror="this.outerHTML=\'<div class=\"stu-pcard-av\" style=\"background:'+avBg+';color:'+avColor+'\">'+avChar+'</div>\'">'
+      :'<div class="stu-pcard-av" style="background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</div>';
+    var gTag=gender==='m'?'<span class="stu-tag-m" style="font-size:10px">남</span>':gender==='f'?'<span class="stu-tag-f" style="font-size:10px">여</span>':'';
+    return '<div class="stu-pcard'+(isSel?' sel':'')+'" onclick="showStudentDetail('+s._ri+')">'
+      +imgHtml
+      +'<div class="stu-pcard-body">'
+      +'<div class="stu-pcard-name">'+escHtml(name)+'</div>'
+      +'<div class="stu-pcard-sub">'
+      +'<span style="display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;background:'+clsColor+'22;color:'+clsColor+'">'+escHtml(cls)+'</span>'
+      +gTag
+      +'</div>'
+      +'</div></div>';
+  }).join('');
+}
 function renderStudents(){stuRenderShell();}
 function stuFilter(){stuUpdateTable();}
 function stuSetGender(g){stuGenderFilter=g;stuUpdateTable();}
@@ -2942,6 +3000,9 @@ function gDriveApply(d){
     try{localStorage.setItem('jangvis-stu-deleted',JSON.stringify(stuLocalDeleted));}catch(e){}
   }
   gDriveShowStatus('✓ 동기화됨');
+  try{localStorage.setItem('jangvis-drive-hint','1');}catch(e){}
+  var sb=document.getElementById('sync-cloud-btn');
+  if(sb){sb.classList.add('synced');sb.innerHTML='<i class="ti ti-cloud-check" style="font-size:13px"></i>동기화됨';}
 }
 
 function gDriveBuildPayload(){
@@ -2970,7 +3031,7 @@ function gDriveSaveNow(){
     :'https://www.googleapis.com/upload/drive/v3/files/'+gDriveFileId+'?uploadType=multipart';
   fetch(url,{method:isNew?'POST':'PATCH',headers:{Authorization:'Bearer '+stuToken},body:form})
   .then(function(r){return r.json();})
-  .then(function(d){if(isNew&&d.id)gDriveFileId=d.id;gDriveShowStatus('✓ 저장됨');})
+  .then(function(d){if(isNew&&d.id)gDriveFileId=d.id;gDriveShowStatus('✓ 저장됨');try{localStorage.setItem('jangvis-drive-hint','1');}catch(e){};})
   .catch(function(e){gDriveShowStatus('저장 실패',true);console.warn('Drive save:',e);});
 }
 
@@ -3264,6 +3325,85 @@ function gradeUpdate(){
   document.getElementById('grade-list').innerHTML='<div class="gs-tbl-wrap"><table class="gs-tbl">'+thead+tbody+'</table></div>';
 }
 
+/* ══ Google Drive 수동 동기화 ══ */
+function gSyncManual(){
+  if(!IS_CONFIGURED){alert('GOOGLE_CLIENT_ID를 먼저 설정해 주세요.');return;}
+  var sb=document.getElementById('sync-cloud-btn');
+  if(sb){sb.innerHTML='<i class="ti ti-loader-2" style="font-size:13px"></i>연결 중…';}
+  google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:SHEETS_SCOPE,
+    callback:function(resp){
+      if(resp.error){
+        gDriveShowStatus('인증 실패',true);
+        var sb2=document.getElementById('sync-cloud-btn');
+        if(sb2){sb2.innerHTML='<i class="ti ti-cloud-download" style="font-size:13px"></i>동기화';}
+        return;
+      }
+      stuToken=resp.access_token;
+      gDriveLoad();
+    }
+  }).requestAccessToken();
+}
+
+function gSyncOnLoad(){
+  /* 이전에 한 번이라도 Drive 연결했으면 페이지 로드 시 자동 재연결 시도 */
+  try{if(!localStorage.getItem('jangvis-drive-hint'))return;}catch(e){return;}
+  if(!IS_CONFIGURED)return;
+  try{
+    google.accounts.oauth2.initTokenClient({
+      client_id:GOOGLE_CLIENT_ID,
+      scope:SHEETS_SCOPE,
+      prompt:'',       /* 이전 동의 있으면 팝업 없이 토큰 발급 */
+      callback:function(resp){
+        if(resp.error)return; /* 조용히 실패 */
+        stuToken=resp.access_token;
+        /* localStorage에서 SID도 복구 */
+        try{var sid=localStorage.getItem('jangvis-stu-sid');if(sid)stuSpreadsheetId=sid;}catch(e){}
+        gDriveLoad();
+      }
+    }).requestAccessToken({prompt:''});
+  }catch(e){/* GIS 미로드 시 무시 */}
+}
+
+/* ══ 당겨서 새로고침 (모바일) ══ */
+(function(){
+  var startY=0,curY=0,pulling=false;
+  var bar=document.createElement('div');
+  bar.id='ptr-bar';
+  bar.textContent='↓ 당기면 새로고침';
+  document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(bar);});
+
+  document.addEventListener('touchstart',function(e){
+    if(window.scrollY===0){startY=e.touches[0].clientY;pulling=false;}
+  },{passive:true});
+
+  document.addEventListener('touchmove',function(e){
+    if(!startY)return;
+    curY=e.touches[0].clientY;
+    var dy=curY-startY;
+    if(dy>8&&window.scrollY===0){
+      pulling=true;
+      var pct=Math.min(dy/80,1);
+      bar.style.transform='translateY('+(pct*100-100)+'%)';
+      bar.textContent=dy>80?'↑ 놓으면 새로고침':'↓ 당기면 새로고침';
+    }
+  },{passive:true});
+
+  document.addEventListener('touchend',function(){
+    if(!pulling){startY=0;return;}
+    var dy=curY-startY;
+    if(dy>80){
+      bar.style.transform='translateY(0)';
+      bar.textContent='새로고침 중…';
+      setTimeout(function(){location.reload();},300);
+    }else{
+      bar.style.transform='translateY(-100%)';
+    }
+    pulling=false;startY=0;curY=0;
+  },{passive:true});
+})();
+
 /* ══ 반응형: 모바일 탭 ══ */
 var mobileTab='home';
 function showMobileTab(tab){
@@ -3309,7 +3449,7 @@ function applyMobileLayout(){
   }
 }
 window.addEventListener('resize',applyMobileLayout);
-document.addEventListener('DOMContentLoaded',function(){applyMobileLayout();});
+document.addEventListener('DOMContentLoaded',function(){applyMobileLayout();setTimeout(gSyncOnLoad,1200);});
 if(document.readyState==='complete'||document.readyState==='interactive'){applyMobileLayout();}
 </script>
 
