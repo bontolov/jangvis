@@ -2933,17 +2933,24 @@ function stuLoadAllPhotos(){
       return;
     }
     /* Drive 파일: thumbnail 먼저, 실패시 Bearer API */
-    var img=makeImg(thumbUrl);
+    var img=document.createElement('img');
+    img.className=isCard?'stu-pcard-img':'stu-td-av';
+    img.style.cssText=isCard
+      ?'width:100%;aspect-ratio:1;object-fit:cover;object-position:center top;display:block'
+      :'object-fit:cover;object-position:center top';
+    img.onload=function(){if(el.parentNode)el.parentNode.replaceChild(img,el);};
     img.onerror=function(){
-      /* thumbnail 실패 → Drive API Bearer 인증 시도 */
+      /* thumbnail 실패 → Drive API Bearer 토큰으로 재시도 */
+      if(!stuToken)return; /* 토큰 없으면 포기 (gSyncOnLoad 후 재호출됨) */
       stuPhotoDataUrl(raw,function(dataUrl){
         if(!dataUrl)return;
-        var img2=makeImg(dataUrl);
+        var img2=document.createElement('img');
+        img2.className=img.className;img2.style.cssText=img.style.cssText;
         img2.onload=function(){if(el.parentNode)el.parentNode.replaceChild(img2,el);};
+        img2.src=dataUrl;
       });
     };
-    img.onload=function(){if(el.parentNode)el.parentNode.replaceChild(img,el);};
-    /* thumbnail을 DOM에 넣지 않고 미리 로드만 시도 */
+    img.src=thumbUrl; /* src는 핸들러 등록 후 마지막에 설정 */
   });
 }
 function renderStudents(){stuRenderShell();}
@@ -3469,6 +3476,8 @@ function gSyncOnLoad(){
         /* localStorage에서 SID도 복구 */
         try{var sid=localStorage.getItem('jangvis-stu-sid');if(sid)stuSpreadsheetId=sid;}catch(e){}
         gDriveLoad();
+        /* 토큰 획득 후 → 실패했던 사진 재시도 */
+        setTimeout(stuLoadAllPhotos,300);
       }
     }).requestAccessToken({prompt:''});
   }catch(e){/* GIS 미로드 시 무시 */}
