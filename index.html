@@ -1710,16 +1710,21 @@ function gcalInitUI(){
     var hadToken=false;try{hadToken=!!localStorage.getItem('jangvis-gcal-hint');}catch(e){}
     if(hadToken&&typeof google!=='undefined'&&google.accounts&&google.accounts.oauth2){
       showCol2('<div class="gcal-loading"><div class="spinner"></div>자동 연동 중…</div>');
-      google.accounts.oauth2.initTokenClient({
-        client_id:GOOGLE_CLIENT_ID,scope:CALENDAR_SCOPE,prompt:'',
-        callback:function(resp){
-          if(resp.error){showLoginPrompt();return;}
-          gcalToken={access_token:resp.access_token,expires_at:Date.now()+(resp.expires_in-60)*1000};
-          gcalLoggedIn=true;
-          try{localStorage.setItem('jangvis-gcal-token',JSON.stringify(gcalToken));}catch(e){}
-          gcalFetchAll();
-        }
-      }).requestAccessToken();
+      /* 5초 안에 응답 없으면 로그인 버튼으로 fallback */
+      var _gcalSilentTimer=setTimeout(showLoginPrompt,5000);
+      try{
+        google.accounts.oauth2.initTokenClient({
+          client_id:GOOGLE_CLIENT_ID,scope:CALENDAR_SCOPE,prompt:'',
+          callback:function(resp){
+            clearTimeout(_gcalSilentTimer);
+            if(resp.error){showLoginPrompt();return;}
+            gcalToken={access_token:resp.access_token,expires_at:Date.now()+(resp.expires_in-60)*1000};
+            gcalLoggedIn=true;
+            try{localStorage.setItem('jangvis-gcal-token',JSON.stringify(gcalToken));}catch(e){}
+            gcalFetchAll();
+          }
+        }).requestAccessToken();
+      }catch(e){clearTimeout(_gcalSilentTimer);showLoginPrompt();}
     } else {
       showLoginPrompt();
     }
@@ -2341,10 +2346,12 @@ function stuExtractDriveId(raw){
 }
 
 function stuPhotoUrl(raw){
-  /* 외부 URL은 그대로 반환; Drive 파일은 null 반환 (API 로딩 필요) */
+  /* 외부 URL 그대로; Drive 파일 → thumbnail URL 반환 */
   if(!raw||!raw.trim())return null;raw=raw.trim();
   if(raw.match(/^https?:\/\//)&&!raw.match(/drive\.google\.com/))return raw;
-  return null; /* Drive 파일은 stuLoadPhoto로 처리 */
+  var fileId=stuExtractDriveId(raw);
+  if(!fileId)return null;
+  return 'https://drive.google.com/thumbnail?id='+fileId+'&sz=w200-h200';
 }
 
 function stuPhotoDataUrl(raw,cb){
@@ -2897,29 +2904,46 @@ function stuUpdateCards(){
   setTimeout(stuLoadAllPhotos,30);
 }
 function stuLoadAllPhotos(){
-  /* .stu-av-ph 요소: data-photo 속성 있으면 API로 사진 로드 후 교체 */
+  /* thumbnail URL 먼저 시도 (Google 로그인 쿠키) → 실패시 Bearer API fallback */
   document.querySelectorAll('.stu-av-ph[data-photo]').forEach(function(el){
     var raw=el.getAttribute('data-photo');
     if(!raw)return;
-    stuPhotoDataUrl(raw,function(url){
-      if(!url)return;
-      var isCard=el.classList.contains('stu-pcard-av');
-      if(isCard){
-        /* 카드: div → img */
-        var img=document.createElement('img');
-        img.className='stu-pcard-img';
-        img.src=url;
-        img.style.cssText='width:100%;aspect-ratio:1;object-fit:cover;object-position:center top;display:block';
-        if(el.parentNode)el.parentNode.replaceChild(img,el);
-      }else{
-        /* 테이블 아바타: span → img */
-        var img2=document.createElement('img');
-        img2.className='stu-td-av';
-        img2.src=url;
-        img2.style.cssText='object-fit:cover;object-position:center top';
-        if(el.parentNode)el.parentNode.replaceChild(img2,el);
-      }
-    });
+    var isCard=el.classList.contains('stu-pcard-av');
+    function makeImg(src){
+      var img=document.createElement('img');
+      img.className=isCard?'stu-pcard-img':'stu-td-av';
+      img.style.cssText=isCard
+        ?'width:100%;aspect-ratio:1;object-fit:cover;object-position:center top;display:block'
+        :'object-fit:cover;object-position:center top';
+      img.src=src;
+      return img;
+    }
+    function applyImg(src){
+      if(!src)return;
+      var img=makeImg(src);
+      img.onload=function(){if(el.parentNode)el.parentNode.replaceChild(img,el);};
+    }
+    var thumbUrl=stuPhotoUrl(raw);
+    if(!thumbUrl){return;}
+    /* Drive 파일 여부 확인 */
+    var isDrive=!!stuExtractDriveId(raw);
+    if(!isDrive){
+      /* 외부 URL - 직접 사용 */
+      applyImg(thumbUrl);
+      return;
+    }
+    /* Drive 파일: thumbnail 먼저, 실패시 Bearer API */
+    var img=makeImg(thumbUrl);
+    img.onerror=function(){
+      /* thumbnail 실패 → Drive API Bearer 인증 시도 */
+      stuPhotoDataUrl(raw,function(dataUrl){
+        if(!dataUrl)return;
+        var img2=makeImg(dataUrl);
+        img2.onload=function(){if(el.parentNode)el.parentNode.replaceChild(img2,el);};
+      });
+    };
+    img.onload=function(){if(el.parentNode)el.parentNode.replaceChild(img,el);};
+    /* thumbnail을 DOM에 넣지 않고 미리 로드만 시도 */
   });
 }
 function renderStudents(){stuRenderShell();}
@@ -2935,7 +2959,7 @@ function showStudentDetail(ri){
   var num=_skeys.num?(s[_skeys.num]||''):'';
   var gender=_skeys.gender?stuNormGender(s[_skeys.gender]):'';
   var rawPhotoD=_skeys.photo?s[_skeys.photo]||'':'';
-  var photoSrc=null; /* API로 비동기 로드 */
+  var photoSrc=rawPhotoD?stuPhotoUrl(rawPhotoD):null; /* thumbnail URL 우선 */
   var cls=stuGetClass(s);
   var clsColor=stuClassColor(cls);
   var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
@@ -2994,13 +3018,18 @@ function showStudentDetail(ri){
   stuUpdateTable();
   /* 상세 패널 사진 비동기 로드 */
   if(rawPhotoD){
-    stuPhotoDataUrl(rawPhotoD,function(url){
-      if(!url)return;
+    (function(){
       var img=document.getElementById('stu-d-banner-img');
       var av=document.getElementById('stu-d-banner-av');
-      if(img){img.src=url;img.style.display='block';}
-      if(av)av.style.display='none';
-    });
+      if(!rawPhotoD||!img)return;
+      function showImg(src){if(img){img.src=src;img.style.display='block';}if(av)av.style.display='none';}
+      var thumbUrl=stuPhotoUrl(rawPhotoD);
+      if(!thumbUrl)return;
+      img.onerror=function(){
+        stuPhotoDataUrl(rawPhotoD,function(dataUrl){if(dataUrl){img.onerror=null;showImg(dataUrl);}});
+      };
+      showImg(thumbUrl);
+    })();
   }
 }
 
@@ -3414,13 +3443,12 @@ function gSyncManual(){
     client_id:GOOGLE_CLIENT_ID,
     scope:SHEETS_SCOPE,
     callback:function(resp){
-      if(resp.error){
-        gDriveShowStatus('인증 실패',true);
-        var sb2=document.getElementById('sync-cloud-btn');
-        if(sb2){sb2.innerHTML='<i class="ti ti-cloud-download" style="font-size:13px"></i>동기화';}
-        return;
-      }
+      var sb2=document.getElementById('sync-cloud-btn');
+      if(sb2){sb2.innerHTML='<i class="ti ti-cloud-download" style="font-size:13px"></i>동기화';}
+      if(resp.error){gDriveShowStatus('인증 실패',true);return;}
       stuToken=resp.access_token;
+      try{localStorage.setItem('jangvis-drive-hint','1');}catch(e){}
+      try{var sid=localStorage.getItem('jangvis-stu-sid');if(sid)stuSpreadsheetId=sid;}catch(e){}
       gDriveLoad();
     }
   }).requestAccessToken();
