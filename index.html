@@ -469,6 +469,16 @@ body{
 .stu-tr.local-added td:first-child{border-left:2.5px solid var(--ac)}
 .stu-td{padding:9px 12px;font-size:12px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;max-width:0}
 .stu-td-av{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:10px;font-weight:700;flex-shrink:0;margin-right:6px;vertical-align:middle}
+/* ── 포토 카드 그리드 ── */
+.stu-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.stu-pcard{border-radius:12px;overflow:hidden;background:var(--surf);border:0.5px solid var(--bd2);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.stu-pcard:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.stu-pcard.sel{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}
+.stu-pcard-av{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;letter-spacing:-.01em}
+.stu-pcard-img{width:100%;aspect-ratio:1;object-fit:cover;object-position:center top;display:block}
+.stu-pcard-body{padding:8px 10px 10px}
+.stu-pcard-name{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stu-pcard-sub{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
 .stu-td-name{display:flex;align-items:center;min-width:0;overflow:hidden}
 .stu-td-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .stu-del-btn{width:22px;height:22px;border-radius:5px;border:0.5px solid var(--bd2);background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t4);font-size:12px;transition:all .12s;font-family:inherit;vertical-align:middle}
