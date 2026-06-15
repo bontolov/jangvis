@@ -2329,15 +2329,57 @@ function stuNormGender(v){
   if(v==='여'||v==='여자'||v==='F'||v==='f')return 'f';
   return '';
 }
-function stuPhotoUrl(raw){
+/* ── 사진: Drive API 토큰 인증 방식 ── */
+var stuPhotoCache={};  /* fileId → data:image/... URL (메모리 캐시) */
+
+function stuExtractDriveId(raw){
   if(!raw||!raw.trim())return null;raw=raw.trim();
-  var m=raw.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if(m)return 'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w300-h300';
-  m=raw.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  if(m)return 'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w300-h300';
-  if(raw.match(/^https?:\/\//))return raw;
-  if(raw.match(/^[a-zA-Z0-9_-]{25,}$/))return 'https://drive.google.com/thumbnail?id='+raw+'&sz=w300-h300';
-  return null;
+  var m=raw.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);if(m)return m[1];
+  m=raw.match(/[?&]id=([a-zA-Z0-9_-]+)/);if(m)return m[1];
+  if(raw.match(/^[a-zA-Z0-9_-]{25,}$/)&&!raw.match(/^https?:\/\//))return raw;
+  return null; /* 외부 URL이면 null (img src 직접 사용) */
+}
+
+function stuPhotoUrl(raw){
+  /* 외부 URL은 그대로 반환; Drive 파일은 null 반환 (API 로딩 필요) */
+  if(!raw||!raw.trim())return null;raw=raw.trim();
+  if(raw.match(/^https?:\/\//)&&!raw.match(/drive\.google\.com/))return raw;
+  return null; /* Drive 파일은 stuLoadPhoto로 처리 */
+}
+
+function stuPhotoDataUrl(raw,cb){
+  /* raw 셀 값 → 캐시 확인 → Drive API fetch → dataURL 콜백 */
+  if(!raw||!raw.trim()){cb(null);return;}
+  raw=raw.trim();
+  /* 직접 외부 URL */
+  if(raw.match(/^https?:\/\//)&&!raw.match(/drive\.google\.com/)){cb(raw);return;}
+  /* Drive 파일 ID 추출 */
+  var fileId=stuExtractDriveId(raw);
+  if(!fileId){cb(null);return;}
+  /* 캐시 확인 */
+  if(stuPhotoCache[fileId]){cb(stuPhotoCache[fileId]);return;}
+  /* 토큰 없으면 포기 */
+  if(!stuToken){cb(null);return;}
+  /* Drive Files API: alt=media → binary */
+  fetch('https://www.googleapis.com/drive/v3/files/'+fileId+'?alt=media',
+    {headers:{Authorization:'Bearer '+stuToken}})
+  .then(function(r){
+    if(!r.ok)throw new Error(r.status);
+    return r.blob();
+  })
+  .then(function(blob){
+    return new Promise(function(res,rej){
+      var fr=new FileReader();
+      fr.onload=function(){res(fr.result);};
+      fr.onerror=rej;
+      fr.readAsDataURL(blob);
+    });
+  })
+  .then(function(dataUrl){
+    stuPhotoCache[fileId]=dataUrl;
+    cb(dataUrl);
+  })
+  .catch(function(){cb(null);});
 }
 function stuGetClass(s){
   if(_skeys.cls&&s[_skeys.cls])return s[_skeys.cls].trim();
@@ -2528,10 +2570,10 @@ function stuUpdateTable(){
     var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
     var avColor=gender==='m'?'#3B82F6':gender==='f'?'#EC4899':'var(--t3)';
     var avChar=name.length>1?name[1]:name[0];
-    var photoSrcTbl=_skeys.photo?stuPhotoUrl(s[_skeys.photo]):null;
-    var avHtml=photoSrcTbl
-      ?'<img src="'+photoSrcTbl+'" class="stu-td-av" style="object-fit:cover;object-position:center top" onerror="this.outerHTML=\'<span class=\"stu-td-av\" style=\"background:'+avBg+';color:'+avColor+'\">'+avChar+'</span>\'">'
-      :'<span class="stu-td-av" style="background:'+avBg+';color:'+avColor+'">'+avChar+'</span>';
+    var rawPhoto=_skeys.photo?s[_skeys.photo]||'':'';
+    /* 아바타: 항상 텍스트로 먼저 렌더, 사진 있으면 data-photo 속성으로 비동기 교체 */
+    var avHtml='<span class="stu-td-av stu-av-ph" '+(rawPhoto?'data-photo="'+escHtml(rawPhoto)+'" ':'')
+      +'style="background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</span>';
 
     var gTag=gender==='m'?'<span class="stu-tag-m">남</span>':gender==='f'?'<span class="stu-tag-f">여</span>':'';
     var healthBadge=health?'<span class="stu-health-badge" title="'+escHtml(health)+'">'+escHtml(health)+'</span>':'<span style="color:var(--t4)">—</span>';
@@ -2557,6 +2599,7 @@ function stuUpdateTable(){
   });
   tbHtml+='</tbody>';
   tbl.innerHTML=thHtml+tbHtml;
+  setTimeout(stuLoadAllPhotos,30);
 }
 
 function stuSortBy(col){
@@ -2836,11 +2879,10 @@ function stuUpdateCards(){
     var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
     var avColor=gender==='m'?'#3B82F6':gender==='f'?'#EC4899':'var(--t3)';
     var avChar=name.length>1?name[1]:name[0];
-    var photoSrc=_skeys.photo?stuPhotoUrl(s[_skeys.photo]):null;
+    var rawPhotoC=_skeys.photo?s[_skeys.photo]||'':'';
     var isSel=stuSelectedIdx===s._ri;
-    var imgHtml=photoSrc
-      ?'<img class="stu-pcard-img" src="'+photoSrc+'" loading="lazy" onerror="this.outerHTML=\'<div class=\"stu-pcard-av\" style=\"background:'+avBg+';color:'+avColor+'\">'+avChar+'</div>\'">'
-      :'<div class="stu-pcard-av" style="background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</div>';
+    var imgHtml='<div class="stu-pcard-av stu-av-ph" '+(rawPhotoC?'data-photo="'+escHtml(rawPhotoC)+'" data-avbg="'+avBg+'" data-avcolor="'+avColor+'" data-avchar="'+escHtml(avChar)+'" ':'')
+      +' style="background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</div>';
     var gTag=gender==='m'?'<span class="stu-tag-m" style="font-size:10px">남</span>':gender==='f'?'<span class="stu-tag-f" style="font-size:10px">여</span>':'';
     return '<div class="stu-pcard'+(isSel?' sel':'')+'" onclick="showStudentDetail('+s._ri+')">'
       +imgHtml
@@ -2852,6 +2894,33 @@ function stuUpdateCards(){
       +'</div>'
       +'</div></div>';
   }).join('');
+  setTimeout(stuLoadAllPhotos,30);
+}
+function stuLoadAllPhotos(){
+  /* .stu-av-ph 요소: data-photo 속성 있으면 API로 사진 로드 후 교체 */
+  document.querySelectorAll('.stu-av-ph[data-photo]').forEach(function(el){
+    var raw=el.getAttribute('data-photo');
+    if(!raw)return;
+    stuPhotoDataUrl(raw,function(url){
+      if(!url)return;
+      var isCard=el.classList.contains('stu-pcard-av');
+      if(isCard){
+        /* 카드: div → img */
+        var img=document.createElement('img');
+        img.className='stu-pcard-img';
+        img.src=url;
+        img.style.cssText='width:100%;aspect-ratio:1;object-fit:cover;object-position:center top;display:block';
+        if(el.parentNode)el.parentNode.replaceChild(img,el);
+      }else{
+        /* 테이블 아바타: span → img */
+        var img2=document.createElement('img');
+        img2.className='stu-td-av';
+        img2.src=url;
+        img2.style.cssText='object-fit:cover;object-position:center top';
+        if(el.parentNode)el.parentNode.replaceChild(img2,el);
+      }
+    });
+  });
 }
 function renderStudents(){stuRenderShell();}
 function stuFilter(){stuUpdateTable();}
@@ -2865,7 +2934,8 @@ function showStudentDetail(ri){
   var name=s[_skeys.name]||'?';
   var num=_skeys.num?(s[_skeys.num]||''):'';
   var gender=_skeys.gender?stuNormGender(s[_skeys.gender]):'';
-  var photoSrc=_skeys.photo?stuPhotoUrl(s[_skeys.photo]):null;
+  var rawPhotoD=_skeys.photo?s[_skeys.photo]||'':'';
+  var photoSrc=null; /* API로 비동기 로드 */
   var cls=stuGetClass(s);
   var clsColor=stuClassColor(cls);
   var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
@@ -2922,6 +2992,16 @@ function showStudentDetail(ri){
   panel.innerHTML=bannerHtml+nameBarHtml+bodyHtml;
   panel.classList.add('open');
   stuUpdateTable();
+  /* 상세 패널 사진 비동기 로드 */
+  if(rawPhotoD){
+    stuPhotoDataUrl(rawPhotoD,function(url){
+      if(!url)return;
+      var img=document.getElementById('stu-d-banner-img');
+      var av=document.getElementById('stu-d-banner-av');
+      if(img){img.src=url;img.style.display='block';}
+      if(av)av.style.display='none';
+    });
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════
