@@ -2351,6 +2351,7 @@ function stuMapKeys(){
   _skeys.healthc=stuKey(['건강상담','건강 상담']);
   _skeys.note=stuKey(['비고','메모']);
   _skeys.photo=stuKey(['사진','photo','이미지','image']);
+  _skeys.photoId=stuKey(['사진ID','파일ID','DriveID','drive_id','photoId','사진id','파일id','FileID','fileid']);
   _skeys.cls=stuKey(['반','학급','Class']);
   _skeys.dob=stuKey(['생년월일','생일','출생']);
 }
@@ -2468,9 +2469,10 @@ function stuRenderShell(){
     +genderBtns
     +'<div class="stu-vbtn-wrap">'
     +'<button class="stu-vb active" id="svb-list" onclick="stuToggleView(\'list\')"><i class="ti ti-table"></i>목록</button>'
-    +(_skeys.photo?'<button class=\"stu-vb\" id=\"svb-cards\" onclick=\"stuToggleView(\'cards\')\" ><i class=\"ti ti-id\" ></i>포토</button>':'')
+    +((_skeys.photo||_skeys.photoId)?'<button class=\"stu-vb\" id=\"svb-cards\" onclick=\"stuToggleView(\'cards\')\" ><i class=\"ti ti-id\" ></i>포토</button>':'')
     +'<button class="stu-vb" id="svb-map" onclick="stuToggleView(\'map\')"><i class="ti ti-map-pin"></i>지도</button>'
     +'</div>'
+    +(_skeys.photo&&_skeys.photoId?'<button id="stu-fill-photo-btn" onclick="stuAutoFillPhotoIds()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:#10B981;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap"><i class="ti ti-photo-bolt" style="font-size:14px"></i>사진ID 채우기</button>':'')
     +'<button class="stu-add-btn" onclick="stuShowAddModal()"><i class="ti ti-user-plus" style="font-size:14px"></i>학생 추가</button>'
     +'</div>';
 
@@ -2605,7 +2607,7 @@ function stuUpdateTable(){
     var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
     var avColor=gender==='m'?'#3B82F6':gender==='f'?'#EC4899':'var(--t3)';
     var avChar=name.length>1?name[1]:name[0];
-    var rawPhoto=_skeys.photo?s[_skeys.photo]||'':'';
+    var rawPhoto=(_skeys.photoId&&s[_skeys.photoId])||(_skeys.photo?s[_skeys.photo]||'':'');
     /* 아바타: 항상 텍스트로 먼저 렌더, 사진 있으면 data-photo 속성으로 비동기 교체 */
     var avHtml='<span class="stu-td-av stu-av-ph" '+(rawPhoto?'data-photo="'+escHtml(rawPhoto)+'" ':'')
       +'style="background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</span>';
@@ -2813,6 +2815,96 @@ function stuRenderMap(){
   }else{processNext(0);}
 }
 
+/* ── 사진ID 자동 채우기 ── */
+function stuAutoFillPhotoIds(){
+  if(!stuSpreadsheetId){alert('스프레드시트가 연결되지 않았습니다.');return;}
+  if(!_skeys.photo||!_skeys.photoId){alert('"사진"과 "사진ID" 열이 모두 필요합니다.');return;}
+  var btn=document.getElementById('stu-fill-photo-btn');
+  if(btn){btn.innerHTML='<i class="ti ti-loader-2" style="font-size:14px"></i>처리 중…';btn.disabled=true;}
+  /* 쓰기+Drive 조회 권한 별도 요청 */
+  google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.readonly',
+    callback:function(resp){
+      if(resp.error){
+        alert('인증 실패: '+resp.error);
+        if(btn){btn.innerHTML='<i class="ti ti-photo-bolt" style="font-size:14px"></i>사진ID 채우기';btn.disabled=false;}
+        return;
+      }
+      stuDoFillPhotoIds(resp.access_token);
+    }
+  }).requestAccessToken();
+}
+
+function stuDoFillPhotoIds(writeToken){
+  var btn=document.getElementById('stu-fill-photo-btn');
+  function done(msg){
+    alert(msg);
+    if(btn){btn.innerHTML='<i class="ti ti-photo-bolt" style="font-size:14px"></i>사진ID 채우기';btn.disabled=false;}
+  }
+  /* 1. Drive에서 "사진" 폴더 찾기 */
+  fetch('https://www.googleapis.com/drive/v3/files'
+    +'?q=name%3D%27%EC%82%AC%EC%A7%84%27+and+mimeType%3D%27application%2Fvnd.google-apps.folder%27+and+trashed%3Dfalse'
+    +'&fields=files(id,name)',
+    {headers:{Authorization:'Bearer '+writeToken}})
+  .then(function(r){return r.json();})
+  .then(function(fd){
+    var folders=fd.files||[];
+    if(!folders.length){done('"사진" 폴더를 Drive에서 찾을 수 없습니다.');return;}
+    var folderId=folders[0].id;
+    /* 2. 폴더 내 파일 목록 조회 */
+    return fetch('https://www.googleapis.com/drive/v3/files'
+      +'?q=%27'+folderId+'%27+in+parents+and+trashed%3Dfalse'
+      +'&fields=files(id,name)&pageSize=1000',
+      {headers:{Authorization:'Bearer '+writeToken}})
+    .then(function(r){return r.json();})
+    .then(function(fl){
+      var files=fl.files||[];
+      if(!files.length){done('폴더 안에 파일이 없습니다.');return;}
+      /* 3. 파일명 → ID 맵 */
+      var fileMap={};
+      files.forEach(function(f){fileMap[f.name]=f.id;});
+      /* 4. 학생별 매칭 */
+      var photoIdColIdx=stuHeaders.indexOf(_skeys.photoId);
+      if(photoIdColIdx===-1){done('"사진ID" 열을 찾을 수 없습니다.');return;}
+      function colLetter(idx){
+        var l='';idx++;
+        while(idx>0){var r=(idx-1)%26;l=String.fromCharCode(65+r)+l;idx=Math.floor((idx-1)/26);}
+        return l;
+      }
+      var col=colLetter(photoIdColIdx);
+      var sheetName=STU_SHEET_NAME;
+      var data=[];
+      stuAllData.forEach(function(s){
+        if(s[_skeys.photoId])return; /* 이미 채워진 행 건너뜀 */
+        var photoPath=s[_skeys.photo]||'';
+        if(!photoPath)return;
+        var filename=photoPath.split('/').pop().trim();
+        var fileId=fileMap[filename];
+        if(!fileId)return;
+        var rowNum=s._ri+2; /* 헤더=1행, 데이터=2행~ */
+        data.push({range:"'"+sheetName+"'!"+col+rowNum,values:[[fileId]]});
+      });
+      if(!data.length){done('매칭된 파일이 없습니다.
+파일명이 "사진" 열 값과 일치하는지 확인하세요.');return;}
+      /* 5. 시트에 일괄 쓰기 */
+      return fetch('https://sheets.googleapis.com/v4/spreadsheets/'+stuSpreadsheetId+'/values:batchUpdate',{
+        method:'POST',
+        headers:{Authorization:'Bearer '+writeToken,'Content-Type':'application/json'},
+        body:JSON.stringify({valueInputOption:'RAW',data:data})
+      })
+      .then(function(r){return r.json();})
+      .then(function(wr){
+        if(wr.error){done('쓰기 실패: '+wr.error.message);return;}
+        done('완료! '+data.length+'명의 사진ID를 자동으로 채웠습니다.
+페이지를 새로고침하면 사진이 표시됩니다.');
+        stuLoadSheet(); /* 시트 재로드 */
+      });
+    });
+  })
+  .catch(function(e){done('오류: '+e.message);});
+}
+
 /* ── 학생 추가 모달 ── */
 function stuShowAddModal(){
   var existing=document.getElementById('stu-add-modal');
@@ -2914,7 +3006,7 @@ function stuUpdateCards(){
     var avBg=gender==='m'?'#EFF6FF':gender==='f'?'#FDF2F8':'var(--item)';
     var avColor=gender==='m'?'#3B82F6':gender==='f'?'#EC4899':'var(--t3)';
     var avChar=name.length>1?name[1]:name[0];
-    var rawPhotoC=_skeys.photo?s[_skeys.photo]||'':'';
+    var rawPhotoC=(_skeys.photoId&&s[_skeys.photoId])||(_skeys.photo?s[_skeys.photo]||'':'');
     var isSel=stuSelectedIdx===s._ri;
     var imgHtml='<div class="stu-pcard-av stu-av-ph" '+(rawPhotoC?'data-photo="'+escHtml(rawPhotoC)+'" data-avbg="'+avBg+'" data-avcolor="'+avColor+'" data-avchar="'+escHtml(avChar)+'" ':'')
       +' style="background:'+avBg+';color:'+avColor+'">'+escHtml(avChar)+'</div>';
@@ -2992,7 +3084,7 @@ function showStudentDetail(ri){
   var name=s[_skeys.name]||'?';
   var num=_skeys.num?(s[_skeys.num]||''):'';
   var gender=_skeys.gender?stuNormGender(s[_skeys.gender]):'';
-  var rawPhotoD=_skeys.photo?s[_skeys.photo]||'':'';
+  var rawPhotoD=(_skeys.photoId&&s[_skeys.photoId])||(_skeys.photo?s[_skeys.photo]||'':'');
   var photoSrc=rawPhotoD?stuPhotoUrl(rawPhotoD):null; /* thumbnail URL 우선 */
   var cls=stuGetClass(s);
   var clsColor=stuClassColor(cls);
