@@ -2198,9 +2198,25 @@ try{var ld=localStorage.getItem('jangvis-stu-deleted');if(ld)stuLocalDeleted=JSO
 
 function stuOnPageOpen(){
   if(stuLoaded&&stuAllData.length){stuMapKeys();stuRenderShell();return;}
-  // localStorage에 저장된 ID 확인
   try{var sid=localStorage.getItem('jangvis-stu-sid');if(sid)stuSpreadsheetId=sid;}catch(e){}
-  if(stuSpreadsheetId){stuShowSavedForm();}else{stuShowUrlForm();}
+  if(!stuSpreadsheetId){stuShowUrlForm();return;}
+  /* 토큰이 이미 있으면 폼 없이 바로 시트 로드 */
+  if(stuToken){stuShowLoading();stuLoadSheet();return;}
+  /* 토큰 없음 → prompt:'' 조용한 인증 먼저 시도 */
+  if(!IS_CONFIGURED){stuShowSavedForm();return;}
+  stuShowLoading('자동 연결 중…');
+  try{
+    google.accounts.oauth2.initTokenClient({
+      client_id:GOOGLE_CLIENT_ID,scope:SHEETS_SCOPE,prompt:'',
+      callback:function(resp){
+        if(resp.error){stuShowSavedForm();return;} /* 조용한 인증 실패 → 버튼 표시 */
+        stuToken=resp.access_token;
+        try{localStorage.setItem('jangvis-drive-hint','1');}catch(e){}
+        gDriveLoad();
+        stuLoadSheet();
+      }
+    }).requestAccessToken({prompt:''});
+  }catch(e){stuShowSavedForm();}
 }
 
 function stuShowSavedForm(){
@@ -2473,7 +2489,9 @@ function stuRenderShell(){
   var rb=document.getElementById('stu-refresh-btn');
   if(rb)rb.style.display='flex';
 
-  stuUpdateTable();
+  /* 현재 뷰모드 복원 (포토/목록/지도) */
+  if(stuViewMode==='cards'){stuToggleView('cards');}
+  else{stuUpdateTable();}
 }
 
 /* ── 테이블 업데이트 (검색/필터/정렬마다) ── */
@@ -2956,7 +2974,6 @@ function stuLoadAllPhotos(){
 function renderStudents(){stuRenderShell();}
 function stuFilter(){stuUpdateTable();}
 function stuSetGender(g){stuGenderFilter=g;stuUpdateTable();}
-function stuUpdateCards(){stuUpdateTable();}
 
 function showStudentDetail(ri){
   stuSelectedIdx=ri;
