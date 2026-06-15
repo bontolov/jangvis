@@ -11,7 +11,7 @@
 <script>
   var GOOGLE_CLIENT_ID = '909323197790-occ1jcp1a8npbgl33g4gbhgiuaudrtp8.apps.googleusercontent.com';
   var CALENDAR_SCOPE   = 'https://www.googleapis.com/auth/calendar.readonly';
-  var SHEETS_SCOPE     = 'https://www.googleapis.com/auth/spreadsheets.readonly';
+  var SHEETS_SCOPE     = 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.appdata';
   var DAYS_AHEAD       = 30;
   var STU_FILE_NAME    = '26청덕 2학년';
   var STU_SHEET_NAME   = '학생정보';
@@ -755,6 +755,9 @@ body{
         <div class="icon-btn" onclick="toggleTheme()" title="라이트/다크 (F: 사이드바)">
           <i class="ti ti-moon" id="theme-icon"></i>
         </div>
+        <div id="drive-sync-status" title="Google Drive 동기화 상태" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t4);opacity:0;transition:opacity .4s;cursor:default;white-space:nowrap">
+          <i class="ti ti-cloud-check" style="font-size:13px"></i><span id="drive-sync-text"></span>
+        </div>
         <div class="icon-btn" title="알림">
           <i class="ti ti-bell"></i>
           <div class="notif-dot"></div>
@@ -1212,7 +1215,7 @@ function loadDdays(){
     else{ddays=[{name:'독서기록 마감',date:'2026-06-12'},{name:'전학공 발표',date:'2026-06-10'},{name:'기말고사',date:'2026-06-28'}];}
   }catch(e){ddays=[];}
 }
-function saveDdays(){try{localStorage.setItem('jangvis-ddays',JSON.stringify(ddays));}catch(e){}}
+function saveDdays(){try{localStorage.setItem('jangvis-ddays',JSON.stringify(ddays));}catch(e){}gDriveSave();}
 
 function getSortedDdays(){
   var today=ymd(TODAY);
@@ -1377,7 +1380,7 @@ function loadPinboard(){
   try{var s=localStorage.getItem('jangvis-memos');memos=s?JSON.parse(s):[{text:'내일 교과협의회 준비물: 독서교육 사례 3가지 출력',time:'오늘 09:30'},{text:'박소윤 학부모 전화번호: 010-xxxx-xxxx',time:'어제 16:12'}];}catch(e){memos=[];}
   try{var s2=localStorage.getItem('jangvis-docs');docs=s2?JSON.parse(s2):[{name:'2026 독서교육 운영 지침',sub:'새 지침 · 3/2 공람',isNew:true},{name:'학생 생활지도 변경사항 안내',sub:'변경사항 · 4/15 공람',isNew:false}];}catch(e){docs=[];}
 }
-function saveMemos(){try{localStorage.setItem('jangvis-memos',JSON.stringify(memos));}catch(e){}}
+function saveMemos(){try{localStorage.setItem('jangvis-memos',JSON.stringify(memos));}catch(e){}gDriveSave();}
 function saveDocs(){try{localStorage.setItem('jangvis-docs',JSON.stringify(docs));}catch(e){}}
 function renderPinboard(){
   var ml=document.getElementById('memo-list'),dl=document.getElementById('doc-list');
@@ -1586,7 +1589,7 @@ function getWeekKey(offset){return ymd(getMondayOfWeek(offset));}
 function loadTtOverrides(){
   try{var s=localStorage.getItem('jangvis-tt-overrides');if(s)ttOverrides=JSON.parse(s);else ttOverrides={};}catch(e){ttOverrides={};}
 }
-function saveTtOverrides(){try{localStorage.setItem('jangvis-tt-overrides',JSON.stringify(ttOverrides));}catch(e){}}
+function saveTtOverrides(){try{localStorage.setItem('jangvis-tt-overrides',JSON.stringify(ttOverrides));}catch(e){}gDriveSave();}
 function ttCellClass(val){
   if(val==='×')return 'tt-x';
   if(val==='—'||val==='-'||val==='·'||val===''||val==='공강')return 'tt-off';
@@ -2189,7 +2192,21 @@ function stuOnPageOpen(){
   if(stuLoaded&&stuAllData.length){stuMapKeys();stuRenderShell();return;}
   // localStorage에 저장된 ID 확인
   try{var sid=localStorage.getItem('jangvis-stu-sid');if(sid)stuSpreadsheetId=sid;}catch(e){}
-  stuShowUrlForm();
+  if(stuSpreadsheetId){stuShowSavedForm();}else{stuShowUrlForm();}
+}
+
+function stuShowSavedForm(){
+  document.getElementById('stu-content').innerHTML=
+    '<div class="stu-state">'
+    +'<i class="ti ti-table-import stu-state-icon" style="color:var(--ac)"></i>'
+    +'<div class="stu-state-title">저장된 시트 연결</div>'
+    +'<div class="stu-state-sub">이전에 연결한 스프레드시트에 자동으로 연결합니다.<br>'
+    +'<span style="color:var(--t4);font-size:11px">ID: '+escHtml(stuSpreadsheetId.slice(0,16)+'…')+'</span></div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%;max-width:280px">'
+    +'<button class="stu-google-btn" style="width:100%;justify-content:center" onclick="stuLogin()"><i class="ti ti-brand-google"></i>Google로 연결하기</button>'
+    +'<button onclick="stuSpreadsheetId=null;try{localStorage.removeItem(\'jangvis-stu-sid\');}catch(e){}stuShowUrlForm()" '
+    +' style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--t3);font-family:inherit;padding:4px">다른 시트 연결하기</button>'
+    +'</div></div>';
 }
 
 function stuShowUrlForm(){
@@ -2217,6 +2234,7 @@ function stuLoginWithUrl(){
   if(!m){alert('올바른 구글 시트 URL을 입력해 주세요.\n예) https://docs.google.com/spreadsheets/d/XXXXXX');return;}
   stuSpreadsheetId=m[1];
   try{localStorage.setItem('jangvis-stu-sid',stuSpreadsheetId);}catch(e){}
+  gDriveSave();
   stuLogin();
 }
 
@@ -2228,6 +2246,7 @@ function stuLogin(){
     callback:function(resp){
       if(resp.error){stuShowError('인증 실패: '+resp.error);return;}
       stuToken=resp.access_token;
+      gDriveLoad();
       stuLoadSheet();
     }
   }).requestAccessToken();
@@ -2762,6 +2781,7 @@ function stuSaveNewStudent(){
   if(_skeys.note)s[_skeys.note]=(document.getElementById('sam-note')||{}).value||'';
   stuLocalAdded.push(s);
   try{localStorage.setItem('jangvis-stu-added',JSON.stringify(stuLocalAdded));}catch(e){}
+  gDriveSave();
   var modal=document.getElementById('stu-add-modal');if(modal)modal.remove();
   stuRenderShell();
 }
@@ -2770,6 +2790,7 @@ function stuDeleteStudent(ri){
   if(!confirm('이 학생을 목록에서 삭제할까요?\n(Google Sheets 원본에는 영향을 주지 않습니다)'))return;
   stuLocalDeleted[ri]=true;
   try{localStorage.setItem('jangvis-stu-deleted',JSON.stringify(stuLocalDeleted));}catch(e){}
+  gDriveSave();
   if(stuSelectedIdx===ri){stuSelectedIdx=-1;document.getElementById('stu-detail').classList.remove('open');}
   stuUpdateTable();
 }
@@ -2843,6 +2864,121 @@ function showStudentDetail(ri){
   panel.innerHTML=bannerHtml+nameBarHtml+bodyHtml;
   panel.classList.add('open');
   stuUpdateTable();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Google Drive appdata 동기화
+   ─ jangvis-data.json 파일 1개로 모든 기기 데이터 공유
+══════════════════════════════════════════════════════════════ */
+var gDriveFileId=null;
+var gDriveSaveTimer=null;
+
+function gDriveShowStatus(msg,isErr){
+  var el=document.getElementById('drive-sync-status');
+  var tx=document.getElementById('drive-sync-text');
+  if(!el||!tx)return;
+  tx.textContent=msg;
+  el.style.color=isErr?'var(--danger)':'var(--t4)';
+  el.style.opacity='1';
+  clearTimeout(el._fadeTimer);
+  el._fadeTimer=setTimeout(function(){el.style.opacity='0';},2500);
+}
+
+function gDriveLoad(){
+  if(!stuToken)return;
+  gDriveShowStatus('동기화 중…');
+  fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder'
+    +'&q=name%3D%27jangvis-data.json%27&fields=files(id)',
+    {headers:{Authorization:'Bearer '+stuToken}})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    var files=(data.files||[]);
+    if(files.length===0){
+      // 첫 기기 - 현재 상태를 Drive에 저장
+      gDriveSaveNow();
+      return;
+    }
+    gDriveFileId=files[0].id;
+    return fetch('https://www.googleapis.com/drive/v3/files/'+gDriveFileId+'?alt=media',
+      {headers:{Authorization:'Bearer '+stuToken}})
+    .then(function(r){return r.json();})
+    .then(function(d){gDriveApply(d);});
+  })
+  .catch(function(e){gDriveShowStatus('동기화 실패',true);console.warn('Drive load:',e);});
+}
+
+function gDriveApply(d){
+  if(!d||d.v!==1){gDriveSaveNow();return;}
+  // D-day
+  if(Array.isArray(d.dday)){
+    ddays=d.dday;
+    try{localStorage.setItem('jangvis-ddays',JSON.stringify(ddays));}catch(e){}
+    if(typeof renderDdays==='function')renderDdays();
+  }
+  // 메모
+  if(Array.isArray(d.memos)){
+    memos=d.memos;
+    try{localStorage.setItem('jangvis-memos',JSON.stringify(memos));}catch(e){}
+    if(typeof renderPinboard==='function'&&curSection==='pinboard')renderPinboard();
+  }
+  // 시간표 수정
+  if(d.ttOverrides&&typeof d.ttOverrides==='object'){
+    ttOverrides=d.ttOverrides;
+    try{localStorage.setItem('jangvis-tt-overrides',JSON.stringify(ttOverrides));}catch(e){}
+    if(typeof renderTimetable==='function')renderTimetable();
+  }
+  // 스프레드시트 ID
+  if(d.stuSid){
+    stuSpreadsheetId=d.stuSid;
+    try{localStorage.setItem('jangvis-stu-sid',d.stuSid);}catch(e){}
+  }
+  // 로컬 추가/삭제 학생
+  if(Array.isArray(d.stuAdded)){
+    stuLocalAdded=d.stuAdded;
+    try{localStorage.setItem('jangvis-stu-added',JSON.stringify(stuLocalAdded));}catch(e){}
+  }
+  if(d.stuDeleted&&typeof d.stuDeleted==='object'){
+    stuLocalDeleted=d.stuDeleted;
+    try{localStorage.setItem('jangvis-stu-deleted',JSON.stringify(stuLocalDeleted));}catch(e){}
+  }
+  gDriveShowStatus('✓ 동기화됨');
+}
+
+function gDriveBuildPayload(){
+  return {
+    v:1,
+    updatedAt:new Date().toISOString(),
+    dday:typeof ddays!=='undefined'?ddays:[],
+    memos:typeof memos!=='undefined'?memos:[],
+    ttOverrides:typeof ttOverrides!=='undefined'?ttOverrides:{},
+    stuSid:stuSpreadsheetId||'',
+    stuAdded:typeof stuLocalAdded!=='undefined'?stuLocalAdded:[],
+    stuDeleted:typeof stuLocalDeleted!=='undefined'?stuLocalDeleted:{}
+  };
+}
+
+function gDriveSaveNow(){
+  if(!stuToken)return;
+  var body=JSON.stringify(gDriveBuildPayload());
+  var isNew=!gDriveFileId;
+  var meta=isNew?{name:'jangvis-data.json',parents:['appDataFolder']}:{};
+  var form=new FormData();
+  form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
+  form.append('file',new Blob([body],{type:'application/json'}));
+  var url=isNew
+    ?'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart'
+    :'https://www.googleapis.com/upload/drive/v3/files/'+gDriveFileId+'?uploadType=multipart';
+  fetch(url,{method:isNew?'POST':'PATCH',headers:{Authorization:'Bearer '+stuToken},body:form})
+  .then(function(r){return r.json();})
+  .then(function(d){if(isNew&&d.id)gDriveFileId=d.id;gDriveShowStatus('✓ 저장됨');})
+  .catch(function(e){gDriveShowStatus('저장 실패',true);console.warn('Drive save:',e);});
+}
+
+function gDriveSave(){
+  // 토큰 없으면 스킵 (로그인 전)
+  if(!stuToken)return;
+  clearTimeout(gDriveSaveTimer);
+  gDriveSaveTimer=setTimeout(gDriveSaveNow,1500);
 }
 
 function closeStudentDetail(){
@@ -3076,21 +3212,17 @@ function gradeScoreClass(val){
 
 function gradeUpdate(){
   var q=(document.getElementById('grade-q')||{value:''}).value.toLowerCase();
-  // 표시할 열 결정
   var showCols;
   if(gradeSubjectFilter==='all'){
     showCols=gradeHeaders.map(function(_,i){return i;});
   } else {
-    // 이름 + 숫자 고정열 + 선택 과목열
     showCols=[gradeNameCol];
-    // 학번 같은 비숫자 열도 포함 (앞쪽 3열까지)
     for(var ci=0;ci<Math.min(3,gradeHeaders.length);ci++){
       if(ci!==gradeNameCol&&gradeNumCols.indexOf(ci)<0)showCols.push(ci);
     }
     gradeNumCols.forEach(function(j){
       if(gradeHeaders[j]===gradeSubjectFilter)showCols.push(j);
     });
-    // 중복 제거 + 순서 유지
     showCols=gradeHeaders.map(function(_,i){return i;}).filter(function(i){return showCols.indexOf(i)>=0;});
   }
   var rows=gradeAllData.filter(function(r){
